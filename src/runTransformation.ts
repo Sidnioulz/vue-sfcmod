@@ -22,15 +22,15 @@ type JSTransformation = Transform & {
 type JSTransformationModule =
   | JSTransformation
   | {
-      default: Transform
-      parser?: string | Parser
-    }
+    default: Transform
+    parser?: string | Parser
+  }
 
 type VueTransformationModule =
   | VueTransformation
   | {
-      default: VueTransformation
-    }
+    default: VueTransformation
+  }
 
 type TransformationModule = JSTransformationModule | VueTransformationModule
 
@@ -40,9 +40,7 @@ export default function runTransformation(
   params: object = {}
 ) {
   let transformation: VueTransformation | JSTransformation
-  // @ts-ignore
-  if (typeof transformationModule.default !== 'undefined') {
-    // @ts-ignore
+  if ('default' in transformationModule) {
     transformation = transformationModule.default
   } else {
     transformation = transformationModule
@@ -57,7 +55,7 @@ export default function runTransformation(
 
   const { path, source } = fileInfo
   const extension = (/\.([^.]*)$/.exec(path) || [])[0]
-  let lang = extension.slice(1)
+  let lang = extension?.slice(1)
 
   let descriptor: SFCDescriptor
   if (extension === '.vue') {
@@ -76,7 +74,7 @@ export default function runTransformation(
   let parserOption = (transformationModule as JSTransformationModule).parser
   // force inject `parser` option for .tsx? files, unless the module specifies a custom implementation
   if (typeof parserOption !== 'object') {
-    if (lang.startsWith('ts')) {
+    if (lang?.startsWith('ts')) {
       parserOption = lang
     }
   }
@@ -90,8 +88,8 @@ export default function runTransformation(
   const api = {
     j,
     jscodeshift: j,
-    stats: () => {},
-    report: () => {},
+    stats: () => { },
+    report: () => { },
   }
 
   const out = transformation(fileInfo, api, params)
