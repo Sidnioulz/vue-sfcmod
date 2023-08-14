@@ -18,6 +18,7 @@ const transformationMap: {
   'new-directive-api': require('./new-directive-api'),
   'remove-vue-set-and-delete': require('./remove-vue-set-and-delete'),
   'v-model': require('./v-model'),
+  'tree-shaking': require('./tree-shaking'),
 
   // atomic ones
   'remove-contextual-h-from-render': require('./remove-contextual-h-from-render'),
