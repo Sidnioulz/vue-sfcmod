@@ -12,7 +12,7 @@ import createDebug from 'debug'
 import builtInTransformations from '../transformations'
 import runTransformation from '../src/runTransformation'
 
-const debug = createDebug('vue-codemod')
+const debug = createDebug('vue-sfcmod')
 const log = console.log.bind(console)
 
 const { _: files, transformation: transformationName, params } = yargs

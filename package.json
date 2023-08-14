@@ -1,9 +1,9 @@
 {
-  "name": "vue-codemod",
-  "version": "0.0.5",
-  "description": "Vue codemod scripts",
+  "name": "vue-sfcmod",
+  "version": "0.1.0",
+  "description": "Vue 3 SFC codemod framework",
   "main": "dist/index.js",
-  "bin": "./dist/bin/vue-codemod.js",
+  "bin": "./dist/bin/vue-sfcmod.js",
   "files": [
     "dist",
     "!dist/**/__tests__/**"
@@ -16,9 +16,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vuejs/vue-codemod.git"
+    "url": "https://github.com/sidnioulz/vue-sfcmod.git"
   },
-  "author": "Haoqun Jiang",
+  "author": "Steve Dodier-Lazaro <sidnioulz@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "@babel/core": "^7.10.3",
