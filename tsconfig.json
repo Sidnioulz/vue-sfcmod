@@ -3,8 +3,7 @@
     "baseUrl": ".",
     "outDir": "dist",
     "declaration": true,
-    "sourceMap": false,
-    "target": "ES2018",
+    "target": "ES2022",
     "module": "commonjs",
     "moduleResolution": "node",
     "allowJs": false,
@@ -16,7 +15,7 @@
     "esModuleInterop": true,
     "removeComments": false,
     "jsx": "preserve",
-    "lib": ["ES2018", "DOM"],
+    "lib": ["ES2022", "DOM"],
     "types": ["jest", "jscodeshift", "node"],
     "rootDir": "."
   },

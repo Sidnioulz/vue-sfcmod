@@ -41,10 +41,10 @@ import { Statement } from '@babel/types'
  */
 
 export function stringify(sfcDescriptor: SFCDescriptor) {
-  const { template, script, styles, customBlocks } = sfcDescriptor
+  const { template, script, scriptSetup, styles, customBlocks } = sfcDescriptor
 
   return (
-    ([template, script, ...styles, ...customBlocks]
+    ([template, script, scriptSetup, ...styles, ...customBlocks]
       // discard blocks that don't exist
       .filter((block) => block != null) as Array<NonNullable<SFCBlock>>)
       // sort blocks by source position
@@ -277,7 +277,7 @@ export function parse(
           errors.push(
             new SyntaxError(
               `<style vars> has been replaced by a new proposal: ` +
-                `https://github.com/vuejs/rfcs/pull/231`
+              `https://github.com/vuejs/rfcs/pull/231`
             )
           )
         }
@@ -294,7 +294,7 @@ export function parse(
       errors.push(
         new SyntaxError(
           `<script setup> cannot use the "src" attribute because ` +
-            `its syntax will be ambiguous outside of the component.`
+          `its syntax will be ambiguous outside of the component.`
         )
       )
       descriptor.scriptSetup = null
@@ -303,7 +303,7 @@ export function parse(
       errors.push(
         new SyntaxError(
           `<script> cannot use the "src" attribute when <script setup> is ` +
-            `also present because they must be processed together.`
+          `also present because they must be processed together.`
         )
       )
       descriptor.script = null
@@ -341,8 +341,7 @@ function createDuplicateBlockError(
   isScriptSetup = false
 ): CompilerError {
   const err = new SyntaxError(
-    `Single file component can contain only one <${node.tag}${
-      isScriptSetup ? ` setup` : ``
+    `Single file component can contain only one <${node.tag}${isScriptSetup ? ` setup` : ``
     }> element`
   ) as CompilerError
   err.loc = node.loc
@@ -386,12 +385,12 @@ function createBlock(
         block.src = p.value && p.value.content
       } else if (type === 'style') {
         if (p.name === 'scoped') {
-          ;(block as SFCStyleBlock).scoped = true
+          ; (block as SFCStyleBlock).scoped = true
         } else if (p.name === 'module') {
-          ;(block as SFCStyleBlock).module = attrs[p.name]
+          ; (block as SFCStyleBlock).module = attrs[p.name]
         }
       } else if (type === 'script' && p.name === 'setup') {
-        ;(block as SFCScriptBlock).setup = attrs.setup
+        ; (block as SFCScriptBlock).setup = attrs.setup
       }
     }
   })

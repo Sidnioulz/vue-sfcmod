@@ -38,8 +38,9 @@ export const transformAST: ASTTransformation = ({ j, root }) => {
     .node
 
   // replace the value with modelValue
-  // @ts-ignore
-  valueNode?.key.name = 'modelValue'
+  if ('name' in valueNode.key) {
+    valueNode.key.name = 'modelValue'
+  }
 
   // remove model option
   modelCollection.remove()

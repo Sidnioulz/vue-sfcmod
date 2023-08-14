@@ -1,6 +1,4 @@
-// TODO: Programmatic API
-
-export { default as VueTransformation } from './src/VueTransformation'
+export type { VueTransformation } from './src/types/VueTransformation'
 
 export { default as runTransformation } from './src/runTransformation'
 
