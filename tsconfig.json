@@ -17,7 +17,10 @@
     "jsx": "preserve",
     "lib": ["ES2022", "DOM"],
     "types": ["jest", "jscodeshift", "node"],
-    "rootDir": "."
+    "rootDir": ".",
+    "paths": {
+      "~*": ["src/*"]
+    }
   },
   "exclude": ["dist", "playground"]
 }
