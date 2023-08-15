@@ -11,6 +11,12 @@ This project couldn't exist without the prior work done by [vue-codemod](https:/
 - This project targets the whole of SFC files, not just JavaScript
 - `vue-codemod` ships and maintains transform scripts, whereas this project aims to provide a raw codemodding framework rather than pre-built codemods
 
+## Install
+
+```bash
+yarn add -D vue-sfcmod
+```
+
 ## Command Line Usage
 
 `npx vue-sfcmod <path> -t <transformation> --params [transformation params] [...additional options]`
