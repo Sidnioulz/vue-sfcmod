@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+if [ "${2}" != "commit" ] && [ "${2}" != "" ]; then
+  exit 0
+fi
+
+# The `-z "${3}"` part makes sure that we do not fire Commitizen when amending
+# to an already existing commit. Since the previous commit should have already
+# been validated, there is no need to execute the Commititizen CLI once again.
+# See https://www.atlassian.com/git/tutorials/git-hooks.
+[[ -z "${COMMIT_MANUALLY}" && -z "${3}" ]] && exec < /dev/tty && node_modules/.bin/cz --hook || true
