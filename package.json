@@ -2,6 +2,7 @@
   "name": "vue-sfcmod",
   "version": "0.1.0",
   "description": "Vue 3 SFC codemod framework",
+  "type": "module",
   "main": "dist/index.js",
   "bin": "./dist/bin/vue-sfcmod.js",
   "files": [
