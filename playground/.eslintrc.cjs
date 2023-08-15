@@ -38,14 +38,14 @@ module.exports = {
     'import/prefer-default-export': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     'import/extensions': [
-        'error',
-        'ignorePackages',
-        {
-          js: 'never',
-          jsx: 'never',
-          ts: 'never',
-          tsx: 'never'
-        }
+      'error',
+      'ignorePackages',
+      {
+        js: 'never',
+        jsx: 'never',
+        ts: 'never',
+        tsx: 'never',
+      },
     ],
   },
 
@@ -61,5 +61,5 @@ module.exports = {
         'no-restricted-syntax': 'error',
       },
     },
-  ]
+  ],
 }
