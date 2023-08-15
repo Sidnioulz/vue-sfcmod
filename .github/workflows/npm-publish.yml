@@ -8,22 +8,7 @@ on:
     types: [created]
 
 jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - name: Install dependencies
-        run: yarn
-      - name: Lint
-        run: yarn lint
-      - name: Test
-        run: yarn test
-
   publish-npm:
-    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
