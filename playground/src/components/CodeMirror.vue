@@ -53,9 +53,7 @@ export default {
   },
   methods: {
     initialize() {
-      this.cm = markRaw(
-        CodeMirror.fromTextArea(this.$refs.textarea, this.options),
-      )
+      this.cm = markRaw(CodeMirror.fromTextArea(this.$refs.textarea, this.options))
       this.cm.setSize(null, this.height)
       this.cm.setValue(this.code || this.value || this.content)
       this.cm.on('change', (cm) => {

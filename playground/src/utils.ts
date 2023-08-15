@@ -1,10 +1,6 @@
 import { ref, watch, SetupContext } from 'vue'
 
-export function usePropsRef<T>(
-  props: any,
-  field: string,
-  emit: SetupContext['emit'],
-) {
+export function usePropsRef<T>(props: any, field: string, emit: SetupContext['emit']) {
   const r = ref<T>(props[field] as any as T)
 
   watch(

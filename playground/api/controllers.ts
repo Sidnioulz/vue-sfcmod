@@ -1,6 +1,8 @@
-import fg from 'fast-glob'
-import { TRANS_DIR, API_PORT, ROOT_DIR } from './constants'
 import path from 'path'
+
+import fg from 'fast-glob'
+
+import { TRANS_DIR, API_PORT, ROOT_DIR } from './constants'
 
 export async function getTransformations() {
   const files = await fg('*.ts', {

@@ -1,4 +1,4 @@
-import runTransformation from '../../dist/src/runTransformation'
+import runTransformation from 'vue-sfcmod/dist/src/runTransformation'
 
 const transfrom = process.argv[2]
 const options = JSON.parse(process.argv[3] || '{}')

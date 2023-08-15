@@ -1,17 +1,15 @@
 import debug from './debug'
-
-import { parse as parseSFC, stringify as stringifySFC } from './sfcUtils'
-import normaliseTransformationModule from './normaliseTransformationModule'
+import { parse as parseSFC, stringify as stringifySFC } from './sfc'
 import transformCode from './transformCode'
 import transformStyle from './transformStyle'
 import transformTemplate from './transformTemplate'
-
-import type { TransformationModule } from './types/TransformationModule'
-import type { TransformationDescriptor } from './types/TransformationDescriptor'
+import type { FileInfo } from './types/FileInfo'
 import type { JSTransformation } from './types/JSTransformation'
 import type { StyleTransformation } from './types/StyleTransformation'
 import type { TemplateTransformation } from './types/TemplateTransformation'
-import type { FileInfo } from './types/FileInfo'
+import type { TransformationDescriptor } from './types/TransformationDescriptor'
+import type { TransformationModule } from './types/TransformationModule'
+import { normaliseTransformationModule } from './utils/normaliseTransformationModule'
 
 export default function runTransformation(
   fileInfo: FileInfo,
@@ -27,7 +25,7 @@ export default function runTransformation(
 
   if (extension === '.vue') {
     debug('Source file is Vue SFC')
-    const descriptor = parseSFC(source, { filename: path }).descriptor
+    const { descriptor } = parseSFC(source, { filename: path })
     const transformsToRun: {
       runner: (...args: unknown[]) => boolean
       descriptor: TransformationDescriptor
@@ -60,7 +58,7 @@ export default function runTransformation(
     }
     if (descriptor.styles && transformation.style) {
       debug('Planning to transform <style>')
-      for (let index = 0; index < descriptor.styles.length; ++index) {
+      for (let index = 0; index < descriptor.styles.length; index += 1) {
         transformsToRun.push({
           runner: transformStyle,
           transform: transformation.style,
@@ -69,44 +67,37 @@ export default function runTransformation(
       }
     }
 
-    const hasChanges = transformsToRun.reduce(
-      (previouslyHadChanges, current) => {
-        const currentHasChanges = current.runner(
-          current.transform,
-          current.descriptor,
-          path,
-          params,
-        )
-        return previouslyHadChanges || currentHasChanges
-      },
-      false,
-    )
+    const hasChanges = transformsToRun.reduce((previouslyHadChanges, current) => {
+      const currentHasChanges = current.runner(current.transform, current.descriptor, path, params)
+
+      return previouslyHadChanges || currentHasChanges
+    }, false)
 
     return hasChanges ? stringifySFC(descriptor) : fileInfo.source
-  } else {
-    if (!transformation.script) {
-      throw new Error(
-        'When passing a non-Vue file, a JavaScript transformation function must be provided.',
-      )
-    }
-
-    transformCode(
-      transformation.script,
-      {
-        type: 'script',
-        get content() {
-          return fileInfo.source
-        },
-        set content(out: string) {
-          fileInfo.source = out
-        },
-        attrs: {},
-        lang: extension?.slice(1),
-      },
-      path,
-      params,
-    )
-
-    return fileInfo.source
   }
+  if (!transformation.script) {
+    throw new Error(
+      'When passing a non-Vue file, a JavaScript transformation function must be provided.',
+    )
+  }
+
+  transformCode(
+    transformation.script,
+    {
+      type: 'script',
+      get content() {
+        return fileInfo.source
+      },
+      set content(out: string) {
+        // eslint-disable-next-line no-param-reassign
+        fileInfo.source = out
+      },
+      attrs: {},
+      lang: extension?.slice(1),
+    },
+    path,
+    params,
+  )
+
+  return fileInfo.source
 }

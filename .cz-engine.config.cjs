@@ -4,10 +4,8 @@ const wordWrap = require('word-wrap')
 
 const options = configLoader.load() || {}
 const longestTypeLength =
-  Object.keys(options.types).reduce(
-    (previous, current) => Math.max(previous, current.length),
-    0,
-  ) + 1
+  Object.keys(options.types).reduce((previous, current) => Math.max(previous, current.length), 0) +
+  1
 
 const formattedOptions = Object.entries(options.types).map(([key, type]) => ({
   name: `${`${key}:`.padEnd(longestTypeLength)} ${type.description}`,
@@ -83,9 +81,7 @@ module.exports = {
         transformer(subject, answers) {
           const filteredSubject = formatSubject(subject)
           const color =
-            filteredSubject.length <= maxSummaryLength(answers)
-              ? chalk.green
-              : chalk.red
+            filteredSubject.length <= maxSummaryLength(answers) ? chalk.green : chalk.red
 
           return color(`(${filteredSubject.length}) ${subject}`)
         },
@@ -108,8 +104,7 @@ module.exports = {
       {
         type: 'input',
         name: 'body',
-        message:
-          'Provide a longer description of the change: (press enter to skip)\n',
+        message: 'Provide a longer description of the change: (press enter to skip)\n',
         default: options.defaultBody,
       },
       {
@@ -133,11 +128,7 @@ module.exports = {
 
       // Apply breaking change prefix, removing it if already present
       const breaking = hasContent(answers.breaking)
-        ? wrap(
-            `BREAKING CHANGE: ${answers.breaking
-              .trim()
-              .replace(/^BREAKING CHANGE: /, '')}`,
-          )
+        ? wrap(`BREAKING CHANGE: ${answers.breaking.trim().replace(/^BREAKING CHANGE: /, '')}`)
         : ''
 
       commit([head, body, breaking].filter(Boolean).join('\n\n'))

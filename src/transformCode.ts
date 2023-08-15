@@ -1,5 +1,5 @@
 import jscodeshift from 'jscodeshift'
-// @ts-expect-error
+// @ts-expect-error getParser is not directly exported and thus not well typed
 import getParser from 'jscodeshift/src/getParser'
 
 import debug from './debug'
@@ -25,16 +25,19 @@ export default function transformCode(
   }
 
   if (parserOption) {
-    parser =
-      typeof parserOption === 'string' ? getParser(parserOption) : parserOption
+    parser = typeof parserOption === 'string' ? getParser(parserOption) : parserOption
   }
 
   const j = jscodeshift.withParser(parser)
   const api = {
     j,
     jscodeshift: j,
-    stats: () => {},
-    report: () => {},
+    stats: () => {
+      return undefined
+    },
+    report: () => {
+      return undefined
+    },
   }
 
   const out = transformation({ path, source: descriptor.content }, api, params)
@@ -43,9 +46,11 @@ export default function transformCode(
   if (out && out !== descriptor.content) {
     debug('Updating descriptor with transformed content')
     descriptor.content = out
+
     return true
   }
 
   debug('No code changes')
+
   return false
 }

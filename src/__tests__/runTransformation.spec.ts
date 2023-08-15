@@ -1,8 +1,7 @@
-// @ts-nocheck
 /* eslint-env jest */
 import type { Transform } from 'jscodeshift'
+
 import runTransformation from '../runTransformation'
-import { tsStringKeyword, typeAnnotation } from '@babel/types'
 
 const unreachableTransform: Transform = () => {
   throw new Error('This transform should never be invoked')
@@ -23,15 +22,16 @@ const addUseStrict: Transform = (file, api, options) => {
     )
 
   const withComments = (to, from) => {
+    // eslint-disable-next-line no-param-reassign
     to.comments = from.comments
+
     return to
   }
 
-  const createUseStrictExpression = () =>
-    j.expressionStatement(j.literal('use strict'))
+  const createUseStrictExpression = () => j.expressionStatement(j.literal('use strict'))
 
   const root = j(file.source)
-  const body = root.get().value.program.body
+  const { body } = root.get().value.program
   if (!body.length || hasStrictMode(body)) {
     return null
   }
@@ -40,9 +40,7 @@ const addUseStrict: Transform = (file, api, options) => {
   body[0].comments = body[1].comments
   delete body[1].comments
 
-  return root.toSource(
-    options.printOptions || { quote: 'single', lineTerminator: '\n' },
-  )
+  return root.toSource(options?.printOptions || { quote: 'single', lineTerminator: '\n' })
 }
 
 const retypeParameter: Transform = (file, api, options) => {
@@ -58,13 +56,12 @@ const retypeParameter: Transform = (file, api, options) => {
         .filter((param) => param.typeAnnotation)
         .map((param) => param.typeAnnotation)
         .forEach((annotation) => {
+          // eslint-disable-next-line no-param-reassign
           annotation.typeAnnotation = j.tsNumberKeyword()
         })
     })
 
-  return root.toSource(
-    options.printOptions || { quote: 'single', lineTerminator: '\n' },
-  )
+  return root.toSource(options?.printOptions || { quote: 'single', lineTerminator: '\n' })
 }
 
 const vueSfcSource = `<template>
@@ -236,18 +233,16 @@ defineOptions({
 
 describe('run-transformation', () => {
   it('transforms .js files', () => {
-    const source = `function a() { console.log('hello') }`
+    const source = "function a() { console.log('hello') }"
     const file = { path: '/tmp/a.js', source }
     const result = runTransformation(file, addUseStrict)
-    expect(result).toBe(`'use strict';\nfunction a() { console.log('hello') }`)
+    expect(result).toBe("'use strict';\nfunction a() { console.log('hello') }")
   })
   it('transforms .ts files', () => {
-    const source = `function a(name: string) { console.log('hello', name) }`
+    const source = "function a(name: string) { console.log('hello', name) }"
     const file = { path: '/tmp/a.ts', source }
     const result = runTransformation(file, retypeParameter)
-    expect(result).toBe(
-      `function a(name: number) { console.log('hello', name) }`,
-    )
+    expect(result).toBe("function a(name: number) { console.log('hello', name) }")
   })
 
   it('transforms script blocks in .vue files with JS transform', () => {

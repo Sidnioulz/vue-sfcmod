@@ -9,7 +9,11 @@ export default function transformStyle(
   params: object,
 ): boolean {
   debug('Running style transform')
-  // TODO
-  debug('Not supported yet, no style changes')
+
+  if (transformation || descriptor || path || params) {
+    // TODO
+    debug('Not supported yet, no style changes')
+  }
+
   return false
 }

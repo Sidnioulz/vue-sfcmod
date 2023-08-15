@@ -12,11 +12,7 @@
         <slot name="actions"></slot>
       </div>
     </div>
-    <CodeMirror
-      v-model:code="code"
-      :options="cmOptions"
-      class="h-auto overflow-auto"
-    />
+    <CodeMirror v-model:code="code" :options="cmOptions" class="h-auto overflow-auto" />
   </div>
 </template>
 
@@ -87,9 +83,7 @@ export default defineComponent({
 
     const cmOptions = computed(() => {
       return {
-        mode:
-          props.mode ||
-          (props.filepath?.endsWith('.vue') ? 'text/x-vue' : 'text/typescript'),
+        mode: props.mode || (props.filepath?.endsWith('.vue') ? 'text/x-vue' : 'text/typescript'),
         lines: true,
         lineNumbers: true,
         tabSize: 2,

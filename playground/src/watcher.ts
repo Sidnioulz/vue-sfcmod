@@ -1,4 +1,5 @@
 import { ref, onUnmounted } from 'vue'
+
 import { store } from './store'
 
 interface Event {
@@ -7,7 +8,7 @@ interface Event {
 }
 
 export function useFileWatcher(callback: (e: Event) => void) {
-  let isReady = ref(false)
+  const isReady = ref(false)
   let ws: WebSocket | undefined
 
   const connect = () => {

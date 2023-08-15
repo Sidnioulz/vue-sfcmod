@@ -7,11 +7,7 @@
       <option v-for="i in items" :value="i" :key="i">{{ getText(i) }}</option>
     </select>
     <div class="text-lg p-1 m-auto -ml-8 mr-3 pointer-events-none opacity-50">
-      <span
-        class="iconify"
-        data-icon="ri:arrow-down-s-line"
-        data-inline="false"
-      ></span>
+      <span class="iconify" data-icon="ri:arrow-down-s-line" data-inline="false"></span>
     </div>
   </template>
 </template>
@@ -38,9 +34,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const model = usePropsRef<string>(props, 'value', emit)
     const items = computed(() => {
-      return (store.fixtures[store.current] || []).filter((i) =>
-        i.match(new RegExp(props.type)),
-      )
+      return (store.fixtures[store.current] || []).filter((i) => i.match(new RegExp(props.type)))
     })
 
     const getText = (i: string) => {

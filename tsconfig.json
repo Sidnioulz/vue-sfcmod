@@ -22,5 +22,5 @@
       "~*": ["src/*"]
     }
   },
-  "exclude": ["dist", "playground"]
+  "exclude": ["dist", "playground", "**/__tests__"]
 }

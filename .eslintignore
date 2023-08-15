@@ -17,3 +17,6 @@ node_modules
 coverage
 
 dist
+
+# Handled separately
+playground

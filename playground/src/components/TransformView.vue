@@ -11,17 +11,9 @@
         mode="text/x-vue"
       >
         <template v-slot:title>
-          <FixtureSelect
-            v-model:value="inputFixtureName"
-            type="input"
-            :changed="inputChanged"
-          />
+          <FixtureSelect v-model:value="inputFixtureName" type="input" :changed="inputChanged" />
           <button @click="newInput" class="btn-icon text-lg">
-            <span
-              class="iconify"
-              data-icon="ri:add-circle-line"
-              data-inline="false"
-            ></span>
+            <span class="iconify" data-icon="ri:add-circle-line" data-inline="false"></span>
           </button>
           <button
             @click="saveInput"
@@ -29,20 +21,12 @@
             class="btn-icon text-lg"
             :class="{ disabled: !inputChanged }"
           >
-            <span
-              class="iconify"
-              data-icon="ri:save-line"
-              data-inline="false"
-            ></span>
+            <span class="iconify" data-icon="ri:save-line" data-inline="false"></span>
           </button>
         </template>
         <template v-slot:actions>
           <button @click="run" class="btn-icon text-lg">
-            <span
-              class="iconify"
-              data-icon="ri:play-line"
-              data-inline="false"
-            ></span>
+            <span class="iconify" data-icon="ri:play-line" data-inline="false"></span>
           </button>
         </template>
       </Editor>
@@ -54,26 +38,14 @@
           <div class="text-gray-600 text-sm m-auto px-2">
             {{ outputFixtureName || 'Output' }}
           </div>
-          <button
-            @click="saveOutput"
-            v-show="outputFixtureName"
-            class="btn-icon text-lg"
-          >
-            <span
-              class="iconify"
-              data-icon="ri:save-line"
-              data-inline="false"
-            ></span>
+          <button @click="saveOutput" v-show="outputFixtureName" class="btn-icon text-lg">
+            <span class="iconify" data-icon="ri:save-line" data-inline="false"></span>
           </button>
         </template>
         <template v-slot:actions>
           <div class="text-sm mr-1 m-auto text-gray-500">{{ lastUpdate }}</div>
           <div class="text-lg p-1 m-auto">
-            <span
-              class="iconify"
-              data-icon="logos:vue"
-              data-inline="false"
-            ></span>
+            <span class="iconify" data-icon="logos:vue" data-inline="false"></span>
           </div>
         </template>
       </Editor>
@@ -141,15 +113,10 @@ export default defineComponent({
       inputCounter.value += 1
     }
     const saveOutput = () => {
-      saveFile(
-        getFixturePath(store.current, outputFixtureName.value),
-        output.value,
-      )
+      saveFile(getFixturePath(store.current, outputFixtureName.value), output.value)
     }
 
-    const outputFixtureName = computed(() =>
-      inputFixtureName.value.replace('.input.', '.output.'),
-    )
+    const outputFixtureName = computed(() => inputFixtureName.value.replace('.input.', '.output.'))
 
     // on trans changed
     watch(
@@ -167,10 +134,7 @@ export default defineComponent({
       () => inputFixtureName.value,
       () => {
         if (inputFixtureName.value) {
-          inputPath.value = getFixturePath(
-            store.current,
-            inputFixtureName.value,
-          )
+          inputPath.value = getFixturePath(store.current, inputFixtureName.value)
         } else {
           inputPath.value = ''
         }
@@ -192,10 +156,7 @@ export default defineComponent({
       document.addEventListener(
         'keydown',
         function (e) {
-          if (
-            (window.navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) &&
-            e.keyCode == 83
-          ) {
+          if ((window.navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) && e.keyCode == 83) {
             e.preventDefault()
             // currently only work for input panel
             // consider save file base on current focus in the future

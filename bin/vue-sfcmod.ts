@@ -1,18 +1,17 @@
 #!/usr/bin/env node
 
 import * as fs from 'fs'
-import * as path from 'path'
 import Module from 'module'
-
-import * as yargs from 'yargs'
-import * as globby from 'globby'
+import * as path from 'path'
 
 import createDebug from 'debug'
+import * as globby from 'globby'
+import * as yargs from 'yargs'
 
-import builtInTransformations from '../transformations'
 import runTransformation from '../src/runTransformation'
 
 const debug = createDebug('vue-sfcmod')
+// eslint-disable-next-line no-console
 const log = console.log.bind(console)
 
 const {
@@ -33,6 +32,19 @@ const {
   .demandOption('transformation')
   .help().argv
 
+function loadTransformationModule(nameOrPath: string) {
+  const customModulePath = path.resolve(process.cwd(), nameOrPath)
+  if (fs.existsSync(customModulePath)) {
+    const requireFunc = Module.createRequire(path.resolve(process.cwd(), './package.json'))
+
+    // TODO: interop with ES module
+    // TODO: fix absolute path
+    return requireFunc(`./${nameOrPath}`)
+  }
+
+  throw new Error(`Cannot find transformation module ${nameOrPath}`)
+}
+
 // TODO: port the `Runner` interface of jscodeshift
 async function main() {
   const resolvedPaths = globby.sync(files as string[])
@@ -47,38 +59,17 @@ async function main() {
       source: fs.readFileSync(p).toString(),
     }
     try {
-      const result = runTransformation(
-        fileInfo,
-        transformationModule,
-        params as object,
-      )
+      const result = runTransformation(fileInfo, transformationModule, params as object)
       fs.writeFileSync(p, result)
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(e)
     }
   }
 }
 
 main().catch((err) => {
+  // eslint-disable-next-line no-console
   console.error(err)
   process.exit(1)
 })
-
-function loadTransformationModule(nameOrPath: string) {
-  let transformation = builtInTransformations[nameOrPath]
-  if (transformation) {
-    return transformation
-  }
-
-  const customModulePath = path.resolve(process.cwd(), nameOrPath)
-  if (fs.existsSync(customModulePath)) {
-    const requireFunc = Module.createRequire(
-      path.resolve(process.cwd(), './package.json'),
-    )
-    // TODO: interop with ES module
-    // TODO: fix absolute path
-    return requireFunc(`./${nameOrPath}`)
-  }
-
-  throw new Error(`Cannot find transformation module ${nameOrPath}`)
-}

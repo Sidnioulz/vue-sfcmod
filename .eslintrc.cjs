@@ -44,6 +44,7 @@ module.exports = {
     'prefer-destructuring': 'error',
     'import/extensions': 'off',
     'import/newline-after-import': ['error', { count: 1 }],
+    'no-restricted-syntax': ['error', 'ForInStatement', 'LabeledStatement', 'WithStatement'],
     'import/no-extraneous-dependencies': [
       'error',
       {
@@ -64,14 +65,7 @@ module.exports = {
       'error',
       {
         alphabetize: { order: 'asc' },
-        groups: [
-          'builtin',
-          'external',
-          'internal',
-          'parent',
-          'sibling',
-          'index',
-        ],
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
         'newlines-between': 'always',
       },
     ],
@@ -90,11 +84,7 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': 'error',
     'arrow-body-style': 'off',
     'prefer-arrow-callback': 'off',
-    quotes: [
-      'error',
-      'single',
-      { allowTemplateLiterals: false, avoidEscape: true },
-    ],
+    quotes: ['error', 'single', { allowTemplateLiterals: false, avoidEscape: true }],
   },
 
   overrides: [

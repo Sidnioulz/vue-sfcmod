@@ -16,6 +16,4 @@ export type VueTransformationModule =
       default: VueTransformation
     }
 
-export type TransformationModule =
-  | JSTransformationModule
-  | VueTransformationModule
+export type TransformationModule = JSTransformationModule | VueTransformationModule

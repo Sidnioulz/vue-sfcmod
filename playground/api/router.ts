@@ -1,9 +1,11 @@
-import Router from '@koa/router'
-import path from 'path'
-import fs from 'fs-extra'
-import os from 'os'
-import { ROOT_DIR } from './constants'
 import { spawnSync } from 'child_process'
+import os from 'os'
+import path from 'path'
+
+import Router from '@koa/router'
+import fs from 'fs-extra'
+
+import { ROOT_DIR } from './constants'
 import { getMeta } from './controllers'
 
 const router = new Router()

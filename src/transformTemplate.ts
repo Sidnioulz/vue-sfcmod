@@ -9,7 +9,11 @@ export default function transformTemplate(
   params: object,
 ): boolean {
   debug('Running template transform')
-  // TODO
-  debug('Not supported yet, no template changes')
+
+  if (transformation || descriptor || path || params) {
+    // TODO
+    debug('Not supported yet, no template changes')
+  }
+
   return false
 }

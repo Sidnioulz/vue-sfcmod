@@ -1,9 +1,11 @@
-import Koa from 'koa'
 import http from 'http'
-import { router } from './router'
-import json from 'koa-json'
+
+import Koa from 'koa'
 import bodyParser from 'koa-bodyparser'
 import error from 'koa-error'
+import json from 'koa-json'
+
+import { router } from './router'
 
 const app = new Koa()
 const server = http.createServer(app.callback())

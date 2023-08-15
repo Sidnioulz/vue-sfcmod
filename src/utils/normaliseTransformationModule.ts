@@ -1,11 +1,11 @@
-import debug from './debug'
+import debug from '../debug'
+import type { JSTransformation } from '../types/JSTransformation'
+import type { TransformationModule } from '../types/TransformationModule'
+import type { VueTransformation } from '../types/VueTransformation'
 
-import { isVueTransformation } from './utils/isVueTransformation'
-import type { JSTransformation } from './types/JSTransformation'
-import type { TransformationModule } from './types/TransformationModule'
-import type { VueTransformation } from './types/VueTransformation'
+import { isVueTransformation } from './isVueTransformation'
 
-export default function normaliseTransformationModule(
+export function normaliseTransformationModule(
   transformationModule: TransformationModule,
 ): VueTransformation {
   debug('Normalising transformation module')
@@ -21,9 +21,10 @@ export default function normaliseTransformationModule(
 
   if (isVueTransformation(transformation)) {
     debug('Returning VueTransformation object')
+
     return transformation
-  } else {
-    debug('Normalising JSTransformation to VueTransformation object')
-    return { script: transformation }
   }
+  debug('Normalising JSTransformation to VueTransformation object')
+
+  return { script: transformation }
 }
