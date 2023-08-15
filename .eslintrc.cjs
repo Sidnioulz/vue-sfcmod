@@ -48,6 +48,9 @@ module.exports = {
       'error',
       {
         devDependencies: [
+          '.*.config.js',
+          '.*.config.cjs',
+          '.*.config.ts',
           '*.config.js',
           '*.config.cjs',
           '*.config.ts',
@@ -93,4 +96,13 @@ module.exports = {
       { allowTemplateLiterals: false, avoidEscape: true },
     ],
   },
+
+  overrides: [
+    {
+      files: ['**/*.cjs'],
+      rules: {
+        '@typescript-eslint/no-var-requires': 'off',
+      }
+    }
+  ]
 }
