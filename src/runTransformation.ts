@@ -16,7 +16,7 @@ import type { FileInfo } from './types/FileInfo'
 export default function runTransformation(
   fileInfo: FileInfo,
   transformationModule: TransformationModule,
-  params: object = {}
+  params: object = {},
 ) {
   const transformation = normaliseTransformationModule(transformationModule)
 
@@ -28,11 +28,11 @@ export default function runTransformation(
   if (extension === '.vue') {
     debug('Source file is Vue SFC')
     const descriptor = parseSFC(source, { filename: path }).descriptor
-    const transformsToRun: ({
-      runner: (...args: unknown[]) => boolean,
+    const transformsToRun: {
+      runner: (...args: unknown[]) => boolean
       descriptor: TransformationDescriptor
       transform: JSTransformation | StyleTransformation | TemplateTransformation
-    })[] = []
+    }[] = []
 
     if (descriptor.scriptSetup && transformation.script) {
       debug('Planning to transform <script setup>')
@@ -40,7 +40,6 @@ export default function runTransformation(
         runner: transformCode,
         transform: transformation.script,
         descriptor: descriptor.scriptSetup,
-
       })
     }
     if (descriptor.script && transformation.script) {
@@ -70,33 +69,43 @@ export default function runTransformation(
       }
     }
 
-    const hasChanges = transformsToRun.reduce((previouslyHadChanges, current) => {
-      const currentHasChanges = current.runner(
-        current.transform,
-        current.descriptor,
-        path,
-        params,
-      )
-      return previouslyHadChanges || currentHasChanges
-    }, false)
+    const hasChanges = transformsToRun.reduce(
+      (previouslyHadChanges, current) => {
+        const currentHasChanges = current.runner(
+          current.transform,
+          current.descriptor,
+          path,
+          params,
+        )
+        return previouslyHadChanges || currentHasChanges
+      },
+      false,
+    )
 
     return hasChanges ? stringifySFC(descriptor) : fileInfo.source
   } else {
     if (!transformation.script) {
-      throw new Error('When passing a non-Vue file, a JavaScript transformation function must be provided.')
+      throw new Error(
+        'When passing a non-Vue file, a JavaScript transformation function must be provided.',
+      )
     }
 
-    transformCode(transformation.script, {
-      type: 'script',
-      get content() {
-        return fileInfo.source
+    transformCode(
+      transformation.script,
+      {
+        type: 'script',
+        get content() {
+          return fileInfo.source
+        },
+        set content(out: string) {
+          fileInfo.source = out
+        },
+        attrs: {},
+        lang: extension?.slice(1),
       },
-      set content(out: string) {
-        fileInfo.source = out
-      },
-      attrs: {},
-      lang: extension?.slice(1),
-    }, path, params)
+      path,
+      params,
+    )
 
     return fileInfo.source
   }

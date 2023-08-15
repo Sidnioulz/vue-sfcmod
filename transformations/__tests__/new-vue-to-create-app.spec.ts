@@ -6,7 +6,7 @@ defineInlineTest(
   {},
   `new Vue({ template: "<div>hello</div>" })`,
   `Vue.createApp({ template: "<div>hello</div>" })`,
-  'transform `new Vue()` to createApp()'
+  'transform `new Vue()` to createApp()',
 )
 
 defineInlineTest(
@@ -14,7 +14,7 @@ defineInlineTest(
   {},
   `new Vue({ render: h => h(App) }).$mount("#app")`,
   `Vue.createApp({ render: h => h(App) }).mount("#app")`,
-  'transform `new Vue().$mount` with options to createApp().mount'
+  'transform `new Vue().$mount` with options to createApp().mount',
 )
 
 defineInlineTest(
@@ -22,7 +22,7 @@ defineInlineTest(
   {},
   `var vm = new Vue({ template: "<div>hello</div>" }); vm.$mount("#app")`,
   `var vm = Vue.createApp({ template: "<div>hello</div>" }); vm.mount("#app")`,
-  'transform `vm.$mount` to vm.mount'
+  'transform `vm.$mount` to vm.mount',
 )
 
 defineInlineTest(
@@ -30,7 +30,7 @@ defineInlineTest(
   {},
   `new MyComponent().$mount("#app")`,
   `Vue.createApp(MyComponent).mount("#app")`,
-  'transform `new MyComponent().$mount`'
+  'transform `new MyComponent().$mount`',
 )
 
 defineInlineTest(
@@ -38,7 +38,7 @@ defineInlineTest(
   {},
   `new MyComponent({ foo: "bar" }).$mount("#app")`,
   `Vue.createApp(MyComponent, { foo: "bar" }).mount("#app")`,
-  'transform `new MyComponent().$mount` with additional options'
+  'transform `new MyComponent().$mount` with additional options',
 )
 
 defineInlineTest(
@@ -46,7 +46,7 @@ defineInlineTest(
   { includeMaybeComponents: false },
   `new MyComponent().$mount("#app"); vm.$mount("#app")`,
   `new MyComponent().$mount("#app"); vm.$mount("#app")`,
-  'do not transform `new MyComponent().$mount` or `vm.$mount` if `includeMaybeComponents` disabled'
+  'do not transform `new MyComponent().$mount` or `vm.$mount` if `includeMaybeComponents` disabled',
 )
 
 defineInlineTest(
@@ -54,7 +54,7 @@ defineInlineTest(
   {},
   `new Vue({ el: "#app", render: h => h(App) })`,
   `Vue.createApp({\n  render: h => h(App)\n}).mount("#app")`,
-  'transform `new Vue` with `el` prop'
+  'transform `new Vue` with `el` prop',
 )
 
 defineInlineTest(
@@ -62,5 +62,5 @@ defineInlineTest(
   {},
   `new MyComponent({ el: "#app" })`,
   `Vue.createApp(MyComponent).mount("#app")`,
-  'transform `new MyComponent` with `el` prop'
+  'transform `new MyComponent` with `el` prop',
 )

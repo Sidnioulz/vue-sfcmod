@@ -6,7 +6,7 @@ defineInlineTest(
   {},
   `import { defineComponent } from "@vue/composition-api";`,
   `import { defineComponent } from "vue";`,
-  'basic support'
+  'basic support',
 )
 
 defineInlineTest(
@@ -14,7 +14,7 @@ defineInlineTest(
   {},
   `import { defineComponent } from "@vue/composition-api";\nimport { computed } from "@vue/composition-api";`,
   `import { defineComponent, computed } from "vue";`,
-  'correctly transform multiple import declarations'
+  'correctly transform multiple import declarations',
 )
 
 defineInlineTest(
@@ -22,7 +22,7 @@ defineInlineTest(
   {},
   `import * as vca from "@vue/composition-api";`,
   `import * as vca from "vue";`,
-  'correctly transform multiple import declarations'
+  'correctly transform multiple import declarations',
 )
 
 defineInlineTest(
@@ -30,7 +30,7 @@ defineInlineTest(
   {},
   `import VueCompositionApi, { defineComponent } from "@vue/composition-api";\nimport { computed } from "@vue/composition-api";`,
   `import VueCompositionApi from "@vue/composition-api";\nimport { defineComponent, computed } from "vue";`,
-  'do not transform the default import' // it's taken care of by `remove-vue-use`
+  'do not transform the default import', // it's taken care of by `remove-vue-use`
 )
 
 defineInlineTest(
@@ -38,5 +38,5 @@ defineInlineTest(
   {},
   `import * as Vue from "vue";`,
   `import * as Vue from "vue";`,
-  'do nothing if no @vue/composition-api import encountered'
+  'do nothing if no @vue/composition-api import encountered',
 )

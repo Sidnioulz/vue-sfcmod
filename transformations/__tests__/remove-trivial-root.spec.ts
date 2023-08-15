@@ -6,7 +6,7 @@ defineInlineTest(
   {},
   `createApp({ render: () => h(App) });`,
   `createApp(App);`,
-  'remove trivial arrow function render'
+  'remove trivial arrow function render',
 )
 
 defineInlineTest(
@@ -14,7 +14,7 @@ defineInlineTest(
   {},
   `Vue.createApp({ render: () => h(App) });`,
   `Vue.createApp(App);`,
-  'Can recognize Vue.createApp'
+  'Can recognize Vue.createApp',
 )
 
 defineInlineTest(
@@ -22,7 +22,7 @@ defineInlineTest(
   {},
   `createApp({ render() { return h(App) } });`,
   `createApp(App);`,
-  'remove trivial object method render'
+  'remove trivial object method render',
 )
 
 defineInlineTest(
@@ -30,7 +30,7 @@ defineInlineTest(
   {},
   `createApp({ render: () => { return h(App) } });`,
   `createApp(App);`,
-  'remove trivial arrow function render with a block statement'
+  'remove trivial arrow function render with a block statement',
 )
 
 defineInlineTest(
@@ -38,5 +38,5 @@ defineInlineTest(
   {},
   `createApp({ render: () => h(App), data() { return { a: 1 } } });`,
   `createApp({ render: () => h(App), data() { return { a: 1 } } });`,
-  'do not touch non-trivial root components'
+  'do not touch non-trivial root components',
 )

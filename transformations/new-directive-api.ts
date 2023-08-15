@@ -54,8 +54,8 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
         nextProp.comments = nextProp.comments || []
         nextProp.comments.push(
           j.commentBlock(
-            ` __REMOVED__: In Vue 3, there's no 'update' hook for directives `
-          )
+            ` __REMOVED__: In Vue 3, there's no 'update' hook for directives `,
+          ),
         )
         directiveOptions.properties.splice(updateIndex, 1)
         // TODO: should warn user in the console

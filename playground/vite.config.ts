@@ -9,11 +9,9 @@ export default defineConfig({
       '/api': {
         target: `http://localhost:${API_PORT}/`,
         changeOrigin: true,
-        rewrite: (path: string) => path.replace(/^\/api/, '')
-      }
-    }
+        rewrite: (path: string) => path.replace(/^\/api/, ''),
+      },
+    },
   },
-  plugins: [
-    vue()
-  ]
+  plugins: [vue()],
 })

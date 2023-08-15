@@ -2,20 +2,20 @@ import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 
 export const transformAST: ASTTransformation = ({ root, j }) => {
-//  find the createApp()
+  //  find the createApp()
   const appDeclare = root.find(j.VariableDeclarator, {
     id: { type: 'Identifier' },
     init: {
       type: 'CallExpression',
       callee: {
         object: {
-          name: 'Vue'
+          name: 'Vue',
         },
         property: {
-          name: 'createApp'
-        }
-      }
-    }
+          name: 'createApp',
+        },
+      },
+    },
   })
 
   if (!appDeclare.length) {
@@ -23,13 +23,15 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
     const newVue = root.find(j.NewExpression, {
       callee: {
         type: 'Identifier',
-        name: 'Vue'
-      }
+        name: 'Vue',
+      },
     })
 
     // need to transform global-filter first
     if (newVue.length) {
-      console.warn('please transform new-global-api before transform global-filter!')
+      console.warn(
+        'please transform new-global-api before transform global-filter!',
+      )
     }
     return
   }
@@ -43,9 +45,9 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
       callee: {
         type: 'MemberExpression',
         object: { type: 'Identifier', name: 'Vue' },
-        property: { type: 'Identifier', name: 'filter' }
-      }
-    }
+        property: { type: 'Identifier', name: 'filter' },
+      },
+    },
   })
   if (!filters.length) {
     return
@@ -61,8 +63,8 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
         'method',
         j.identifier(args[0].value),
         args[1].params,
-        args[1].body
-      )
+        args[1].body,
+      ),
     )
   }
 
@@ -75,11 +77,11 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
           j.memberExpression(
             j.identifier(appName),
             j.identifier('config.globalProperties.$filters'),
-            false
+            false,
           ),
-          j.objectExpression(methods)
-        )
-      )
+          j.objectExpression(methods),
+        ),
+      ),
     )
 
   for (let i = 0; i < filters.length; i++) {

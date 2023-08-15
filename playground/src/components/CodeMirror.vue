@@ -1,9 +1,9 @@
 <!-- ported from https://github.com/surmon-china/vue-codemirror -->
 
 <template>
-<div class="vue-codemirror">
-  <textarea ref="textarea"></textarea>
-</div>
+  <div class="vue-codemirror">
+    <textarea ref="textarea"></textarea>
+  </div>
 </template>
 
 <script>
@@ -12,7 +12,7 @@ export default {
   data() {
     return {
       content: '',
-      cm: null
+      cm: null,
     }
   },
   props: {
@@ -21,16 +21,16 @@ export default {
     marker: Function,
     height: {
       type: [Number, String],
-      default: '100%'
+      default: '100%',
     },
     options: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     events: {
       type: Array,
-      default: () => ([])
-    }
+      default: () => [],
+    },
   },
   watch: {
     options: {
@@ -39,7 +39,7 @@ export default {
         for (const key in options) {
           this.cm.setOption(key, options[key])
         }
-      }
+      },
     },
     code(newVal) {
       this.handerCodeChange(newVal)
@@ -49,14 +49,16 @@ export default {
     },
     height(v) {
       this.cm.setSize(null, v)
-    }
+    },
   },
   methods: {
     initialize() {
-      this.cm = markRaw(CodeMirror.fromTextArea(this.$refs.textarea, this.options))
+      this.cm = markRaw(
+        CodeMirror.fromTextArea(this.$refs.textarea, this.options),
+      )
       this.cm.setSize(null, this.height)
       this.cm.setValue(this.code || this.value || this.content)
-      this.cm.on('change', cm => {
+      this.cm.on('change', (cm) => {
         this.content = cm.getValue()
         this.$emit('input', this.content)
         this.$emit('update:code', this.content)
@@ -79,9 +81,8 @@ export default {
         'refresh',
         'optionChange',
         'scrollCursorIntoView',
-        'update'
-      ]
-      .forEach(event => {
+        'update',
+      ].forEach((event) => {
         this.cm.on(event, (...args) => {
           this.$emit(event, ...args)
           const lowerCaseEvent = event.replace(/([A-Z])/g, '-$1').toLowerCase()
@@ -110,13 +111,13 @@ export default {
         this.content = newVal
         this.cm.scrollTo(scrollInfo.left, scrollInfo.top)
       }
-    }
+    },
   },
   mounted() {
     this.initialize()
   },
   unmounted() {
     this.destroy()
-  }
+  },
 }
 </script>

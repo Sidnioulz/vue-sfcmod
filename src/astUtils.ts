@@ -25,7 +25,7 @@ export function getVueOptions(context: Context): Collection<VueOptionsType> {
   const { j, root, filename } = context
 
   function wrapOptionsInPaths<T>(
-    nodes: VueOptionsType
+    nodes: VueOptionsType,
   ): ASTPath<VueOptionsType>[] {
     return j(nodes).paths()
   }
@@ -42,8 +42,9 @@ export function getVueOptions(context: Context): Collection<VueOptionsType> {
       return null
     }
 
-    const declarationKind = declarator.closest(j.VariableDeclaration).nodes()[0]
-      .kind
+    const declarationKind = declarator
+      .closest(j.VariableDeclaration)
+      .nodes()[0].kind
 
     if (declarationKind !== 'const') {
       // TODO: check reassignments (=, for in)
@@ -96,7 +97,7 @@ export function getVueOptions(context: Context): Collection<VueOptionsType> {
   }
 
   function isPromiseReturningFunction(
-    fn: ASTNode
+    fn: ASTNode,
   ): fn is FunctionExpression | ArrowFunctionExpression | ObjectMethod {
     if (
       !j.FunctionExpression.check(fn) &&
@@ -125,7 +126,7 @@ export function getVueOptions(context: Context): Collection<VueOptionsType> {
     return (
       returnStatements.length > 0 &&
       returnStatements.every((path) =>
-        !!path.node.argument ? isPromiseExpression(path.node.argument) : true
+        !!path.node.argument ? isPromiseExpression(path.node.argument) : true,
       )
     )
   }
@@ -150,7 +151,7 @@ export function getVueOptions(context: Context): Collection<VueOptionsType> {
     }: {
       mayBeAsyncComponent?: boolean
       shouldCheckProps?: boolean
-    } = {}
+    } = {},
   ): comp is VueOptionsType {
     if (!comp) {
       return false
@@ -314,7 +315,7 @@ export function getVueOptions(context: Context): Collection<VueOptionsType> {
       (prop) =>
         j.ObjectProperty.check(prop) &&
         ((j.Identifier.check(prop.key) && prop.key.name === 'components') ||
-          (j.StringLiteral.check(prop.key) && prop.key.value === 'components'))
+          (j.StringLiteral.check(prop.key) && prop.key.value === 'components')),
     ) as ObjectProperty
 
     if (!componentsProp) {

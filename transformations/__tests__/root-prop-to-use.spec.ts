@@ -8,7 +8,7 @@ defineInlineTest(
   },
   `createApp({ router });`,
   `createApp({}).use(router);`,
-  'correctly transform root `router` prop to `.use(router)`'
+  'correctly transform root `router` prop to `.use(router)`',
 )
 
 defineInlineTest(
@@ -18,7 +18,7 @@ defineInlineTest(
   },
   `Vue.createApp({ router });`,
   `Vue.createApp({}).use(router);`,
-  'Can recognize Vue.createApp'
+  'Can recognize Vue.createApp',
 )
 
 defineInlineTest(
@@ -27,5 +27,5 @@ defineInlineTest(
     rootPropName: 'router',
   },
   `createApp({});`,
-  `createApp({});`
+  `createApp({});`,
 )

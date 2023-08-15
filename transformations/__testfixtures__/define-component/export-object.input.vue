@@ -6,10 +6,10 @@
 export default {
   data() {
     return {
-      greeting: "Hello"
-    };
-  }
-};
+      greeting: 'Hello',
+    }
+  },
+}
 </script>
 
 <style scoped>

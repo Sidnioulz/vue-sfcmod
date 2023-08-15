@@ -21,7 +21,7 @@ type Params = {
  */
 export const transformAST: ASTTransformation<Params> = (
   { root, j },
-  { localBinding }
+  { localBinding },
 ) => {
   const usages = root
     .find(j.Identifier, { name: localBinding })

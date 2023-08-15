@@ -17,7 +17,7 @@ type Params = {
 
 export const transformAST: ASTTransformation<Params> = (
   context,
-  { removablePlugins }
+  { removablePlugins },
 ) => {
   const { j, root } = context
   const vueUseCalls = root.find(j.CallExpression, {
@@ -50,7 +50,7 @@ export const transformAST: ASTTransformation<Params> = (
   removedPlugins.forEach((name) =>
     removeExtraneousImport(context, {
       localBinding: name,
-    })
+    }),
   )
 }
 

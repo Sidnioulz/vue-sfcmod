@@ -17,8 +17,8 @@ process.stdin.on('end', () => {
           path: 'anonymous.vue',
         },
         require(`../../transformations/${transfrom}.ts`),
-        options
-      )
+        options,
+      ),
     )
   } catch (e) {
     console.error(e)

@@ -19,7 +19,7 @@ const addUseStrict: Transform = (file, api, options) => {
           type: 'Literal',
           value: 'use strict',
         },
-      })
+      }),
     )
 
   const withComments = (to, from) => {
@@ -40,7 +40,9 @@ const addUseStrict: Transform = (file, api, options) => {
   body[0].comments = body[1].comments
   delete body[1].comments
 
-  return root.toSource(options.printOptions || { quote: 'single', lineTerminator: '\n' })
+  return root.toSource(
+    options.printOptions || { quote: 'single', lineTerminator: '\n' },
+  )
 }
 
 const retypeParameter: Transform = (file, api, options) => {
@@ -60,7 +62,9 @@ const retypeParameter: Transform = (file, api, options) => {
         })
     })
 
-  return root.toSource(options.printOptions || { quote: 'single', lineTerminator: '\n' })
+  return root.toSource(
+    options.printOptions || { quote: 'single', lineTerminator: '\n' },
+  )
 }
 
 const vueSfcSource = `<template>
@@ -241,7 +245,9 @@ describe('run-transformation', () => {
     const source = `function a(name: string) { console.log('hello', name) }`
     const file = { path: '/tmp/a.ts', source }
     const result = runTransformation(file, retypeParameter)
-    expect(result).toBe(`function a(name: number) { console.log('hello', name) }`)
+    expect(result).toBe(
+      `function a(name: number) { console.log('hello', name) }`,
+    )
   })
 
   it('transforms script blocks in .vue files with JS transform', () => {
@@ -251,7 +257,10 @@ describe('run-transformation', () => {
   })
 
   it('transforms script setup blocks in .vue files with JS transform', () => {
-    const file = { path: '/tmp/scriptSetupJSTransform.vue', source: vueSfcSetupSource }
+    const file = {
+      path: '/tmp/scriptSetupJSTransform.vue',
+      source: vueSfcSetupSource,
+    }
     const result = runTransformation(file, addUseStrict)
     expect(result).toBe(addUseStrictResultWithSetup)
   })
@@ -304,7 +313,7 @@ describe('run-transformation', () => {
         path: '/tmp/e.vue',
         source,
       },
-      unreachableTransform
+      unreachableTransform,
     )
 
     expect(result).toEqual(source)

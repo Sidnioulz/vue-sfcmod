@@ -19,7 +19,7 @@ nextTick(() => {
   console.log('foo')
 })
 `,
-  'tree-shaking (Vue.nextTick() to nextTick())'
+  'tree-shaking (Vue.nextTick() to nextTick())',
 )
 
 // Vue.observable() => reactive()
@@ -30,7 +30,7 @@ defineInlineTest(
 const state = Vue.observable({ count: 0 })`,
   `import Vue, { reactive } from 'vue';
 const state = reactive({ count: 0 })`,
-  'tree-shaking (Vue.observable to reactive)'
+  'tree-shaking (Vue.observable to reactive)',
 )
 
 // Vue.version() => version()
@@ -41,7 +41,7 @@ defineInlineTest(
 var version = Number(Vue.version.split('.')[0])`,
   `import Vue, { version } from 'vue';
 var version = Number(version.split('.')[0])`,
-  'tree-shaking (Vue.version to version)'
+  'tree-shaking (Vue.version to version)',
 )
 
 defineInlineTest(
@@ -56,5 +56,5 @@ nextTick(function() {})
 reactive({ count: 0 })
 version
 `,
-  'tree-shaking'
+  'tree-shaking',
 )

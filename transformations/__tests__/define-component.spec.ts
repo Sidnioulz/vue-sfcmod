@@ -32,7 +32,7 @@ var Profile = defineComponent({
     }
   }
 })`,
-  'transforms Vue.extend to defineComponent'
+  'transforms Vue.extend to defineComponent',
 )
 
 defineInlineTest(
@@ -62,28 +62,28 @@ var Profile = defineComponent({
     }
   }
 })`,
-  'imports from @vue/composition-api'
+  'imports from @vue/composition-api',
 )
 
 const runTest = (
   description: string,
   transformationName: string,
   fixtureName: string,
-  extension: string = 'vue'
+  extension: string = 'vue',
 ) => {
   test(description, () => {
     const fixtureDir = path.resolve(
       __dirname,
       '../__testfixtures__',
-      transformationName
+      transformationName,
     )
     const inputPath = path.resolve(
       fixtureDir,
-      `${fixtureName}.input.${extension}`
+      `${fixtureName}.input.${extension}`,
     )
     const outputPath = path.resolve(
       fixtureDir,
-      `${fixtureName}.output.${extension}`
+      `${fixtureName}.output.${extension}`,
     )
 
     const fileInfo = {
@@ -93,7 +93,7 @@ const runTest = (
     const transformation = require(`../${transformationName}`)
 
     expect(runTransformation(fileInfo, transformation)).toEqual(
-      fs.readFileSync(outputPath).toString()
+      fs.readFileSync(outputPath).toString(),
     )
   })
 }
@@ -101,17 +101,17 @@ const runTest = (
 runTest(
   'do not touch .vue files which already use defineComponent',
   'define-component',
-  'export-define-component'
+  'export-define-component',
 )
 
 runTest(
   'default exported objects in .vue files should be wrapped with a defineComponent call',
   'define-component',
-  'export-object'
+  'export-object',
 )
 
 runTest(
   'Vue.extend in .vue files should be transformed',
   'define-component',
-  'export-vue-extend'
+  'export-vue-extend',
 )

@@ -17,7 +17,7 @@ export const transformAST: ASTTransformation<Params | void> = (
   context,
   params: Params = {
     includeMaybeComponents: true,
-  }
+  },
 ) => {
   const { j, root } = context
   const { includeMaybeComponents = true } = params
@@ -34,7 +34,7 @@ export const transformAST: ASTTransformation<Params | void> = (
     const rootProps = node.arguments[0]
     return j.callExpression(
       j.memberExpression(j.identifier('Vue'), j.identifier('createApp')),
-      [rootProps]
+      [rootProps],
     )
   })
 
@@ -66,7 +66,7 @@ export const transformAST: ASTTransformation<Params | void> = (
       (p) =>
         j.ObjectProperty.check(p) &&
         j.Identifier.check(p.key) &&
-        p.key.name === 'el'
+        p.key.name === 'el',
     )
 
     if (elIndex === -1) {
@@ -75,13 +75,13 @@ export const transformAST: ASTTransformation<Params | void> = (
 
     const elProperty = rootProps.properties.splice(
       elIndex,
-      1
+      1,
     )[0] as N.ObjectProperty
     const elExpr = elProperty.value
     return j.callExpression(
       j.memberExpression(node, j.identifier('mount')),
       // @ts-ignore I'm not sure what the edge cases are
-      [elExpr]
+      [elExpr],
     )
   })
 
@@ -109,11 +109,11 @@ export const transformAST: ASTTransformation<Params | void> = (
             [
               ctor,
               ...instance.arguments, // additional props
-            ]
+            ],
           ),
-          j.identifier('mount')
+          j.identifier('mount'),
         ),
-        [el]
+        [el],
       )
     })
 
@@ -142,7 +142,7 @@ export const transformAST: ASTTransformation<Params | void> = (
           (prop) =>
             j.ObjectProperty.check(prop) &&
             j.Identifier.check(prop.key) &&
-            prop.key.name === 'el'
+            prop.key.name === 'el',
         )
       )
     })
@@ -153,11 +153,11 @@ export const transformAST: ASTTransformation<Params | void> = (
         (p) =>
           j.ObjectProperty.check(p) &&
           j.Identifier.check(p.key) &&
-          p.key.name === 'el'
+          p.key.name === 'el',
       )
       const elProperty = rootProps.properties.splice(
         elIndex,
-        1
+        1,
       )[0] as N.ObjectProperty
       const elExpr = elProperty.value
 
@@ -170,12 +170,12 @@ export const transformAST: ASTTransformation<Params | void> = (
               ctor,
               // additional props, and skip empty objects
               ...(rootProps.properties.length > 0 ? [rootProps] : []),
-            ]
+            ],
           ),
-          j.identifier('mount')
+          j.identifier('mount'),
         ),
         // @ts-ignore I'm not sure what the edge cases are
-        [elExpr]
+        [elExpr],
       )
     })
   }

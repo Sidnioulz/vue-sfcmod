@@ -6,7 +6,7 @@ defineInlineTest(
   {},
   `import { Component } from 'vue-class-component'`,
   `import { Options as Component } from 'vue-class-component'`,
-  'correctly transform import Component form vue-class-component'
+  'correctly transform import Component form vue-class-component',
 )
 
 defineInlineTest(
@@ -14,5 +14,5 @@ defineInlineTest(
   {},
   `import { Component, Props } from 'vue-class-component'`,
   `import { Options as Component, Props } from 'vue-class-component'`,
-  'correctly transform import Component form vue-class-component w/ multiple import'
+  'correctly transform import Component form vue-class-component w/ multiple import',
 )

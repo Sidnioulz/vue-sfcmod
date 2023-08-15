@@ -33,8 +33,8 @@ export default function transformCode(
   const api = {
     j,
     jscodeshift: j,
-    stats: () => { },
-    report: () => { },
+    stats: () => {},
+    report: () => {},
   }
 
   const out = transformation({ path, source: descriptor.content }, api, params)

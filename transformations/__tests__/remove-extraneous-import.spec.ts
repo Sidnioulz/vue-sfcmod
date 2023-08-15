@@ -8,7 +8,7 @@ defineInlineTest(
   },
   `import Vue from "vue";`,
   ``,
-  'Remove extraneous default import'
+  'Remove extraneous default import',
 )
 
 defineInlineTest(
@@ -18,7 +18,7 @@ defineInlineTest(
   },
   `import { createApp } from "vue";`,
   ``,
-  'Remove extraneous named import'
+  'Remove extraneous named import',
 )
 
 defineInlineTest(
@@ -28,7 +28,7 @@ defineInlineTest(
   },
   `import { createApp as createVueApp } from "vue";`,
   ``,
-  'Remove extraneous named import with alias'
+  'Remove extraneous named import with alias',
 )
 
 defineInlineTest(
@@ -38,7 +38,7 @@ defineInlineTest(
   },
   `import * as Vue from "vue";`,
   ``,
-  'Remove extraneous namespaced import'
+  'Remove extraneous namespaced import',
 )
 
 defineInlineTest(
@@ -48,7 +48,7 @@ defineInlineTest(
   },
   `import style from "./style.css";`,
   `import "./style.css";`,
-  'Do not remove import declaration for modules with possible side effects'
+  'Do not remove import declaration for modules with possible side effects',
 )
 
 defineInlineTest(
@@ -58,5 +58,5 @@ defineInlineTest(
   },
   `import Vue from "vue";\nnew Vue()`,
   `import Vue from "vue";\nnew Vue()`,
-  'Do not touch the code if the import is in use'
+  'Do not touch the code if the import is in use',
 )

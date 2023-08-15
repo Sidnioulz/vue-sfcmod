@@ -89,7 +89,7 @@ export const transformAST: ASTTransformation = (context) => {
         // @ts-ignore
         j.memberExpression(node.arguments[0], node.arguments[1], true),
         // @ts-ignore
-        node.arguments[2]
+        node.arguments[2],
       )
     }
 
@@ -97,7 +97,7 @@ export const transformAST: ASTTransformation = (context) => {
       return j.unaryExpression(
         'delete',
         // @ts-ignore
-        j.memberExpression(node.arguments[0], node.arguments[1], true)
+        j.memberExpression(node.arguments[0], node.arguments[1], true),
       )
     }
 

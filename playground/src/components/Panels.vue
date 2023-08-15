@@ -1,5 +1,9 @@
 <template>
-  <div class="relative h-auto overflow-hidden" @mousemove="onMove" @mouseup="pressed = false">
+  <div
+    class="relative h-auto overflow-hidden"
+    @mousemove="onMove"
+    @mouseup="pressed = false"
+  >
     <div class="panels grid h-full" :style="style">
       <slot name="left"></slot>
       <slot name="right"></slot>

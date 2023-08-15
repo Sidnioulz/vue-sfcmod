@@ -6,7 +6,7 @@ defineInlineTest(
   {},
   `Vue.set(vm.someObject, 'b', 2);`,
   `vm.someObject['b'] = 2;`,
-  'Remove Vue.set'
+  'Remove Vue.set',
 )
 
 defineInlineTest(
@@ -26,7 +26,7 @@ defineInlineTest(
       }
     }
   };`,
-  'Remove this.$set'
+  'Remove this.$set',
 )
 
 defineInlineTest(
@@ -48,7 +48,7 @@ defineInlineTest(
       })
     }
   };`,
-  'Remove vm.$set when vm is an alias to this'
+  'Remove vm.$set when vm is an alias to this',
 )
 
 defineInlineTest(
@@ -72,7 +72,7 @@ defineInlineTest(
       })
     }
   };`,
-  `Don't remove vm.$set when we are not sure if vm is an alias to this`
+  `Don't remove vm.$set when we are not sure if vm is an alias to this`,
 )
 
 defineInlineTest(
@@ -80,7 +80,7 @@ defineInlineTest(
   {},
   `value.$set('a', 1)`,
   `value.$set('a', 1)`,
-  `don't remove random .$set functions`
+  `don't remove random .$set functions`,
 )
 
 defineInlineTest(
@@ -88,7 +88,7 @@ defineInlineTest(
   {},
   `Vue.delete(vm.someObject, 'b');`,
   `delete vm.someObject['b'];`,
-  'Remove Vue.delete'
+  'Remove Vue.delete',
 )
 
 defineInlineTest(
@@ -108,7 +108,7 @@ defineInlineTest(
       }
     }
   };`,
-  'Remove this.$delete'
+  'Remove this.$delete',
 )
 
 defineInlineTest(
@@ -130,7 +130,7 @@ defineInlineTest(
       })
     }
   };`,
-  'Remove vm.$delete when vm is an alias to this'
+  'Remove vm.$delete when vm is an alias to this',
 )
 
 defineInlineTest(
@@ -154,7 +154,7 @@ defineInlineTest(
       })
     }
   };`,
-  `Don't remove vm.$delete when we are not sure if vm is an alias to this`
+  `Don't remove vm.$delete when we are not sure if vm is an alias to this`,
 )
 
 defineInlineTest(
@@ -162,7 +162,7 @@ defineInlineTest(
   {},
   `value.$delete('a', 1)`,
   `value.$delete('a', 1)`,
-  `don't remove random .$delete functions`
+  `don't remove random .$delete functions`,
 )
 
 // TODO: delete

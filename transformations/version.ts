@@ -3,22 +3,22 @@ import type { ASTTransformation } from '../src/wrapAstTransformation'
 
 export const transformAST: ASTTransformation = ({ root, j }) => {
   // find Vue.version
-  const versionCalls = root.find(j.MemberExpression, n => {
-    return (
-      n.property.name === 'version' &&
-      n.object.name === 'Vue'
-    )
+  const versionCalls = root.find(j.MemberExpression, (n) => {
+    return n.property.name === 'version' && n.object.name === 'Vue'
   })
 
   if (versionCalls.length) {
     const addImport = require('./add-import')
-    addImport.transformAST({ root, j }, {
-      specifier: {
-        type: 'named',
-        imported: 'version'
+    addImport.transformAST(
+      { root, j },
+      {
+        specifier: {
+          type: 'named',
+          imported: 'version',
+        },
+        source: 'vue',
       },
-      source: 'vue'
-    })
+    )
 
     versionCalls.replaceWith(({ node }) => {
       // @ts-ignore

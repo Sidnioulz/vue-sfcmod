@@ -18,7 +18,7 @@ export const transformAST: ASTTransformation = (context) => {
       imported: {
         name: 'Component',
       },
-    }
+    },
   )
 
   ComponentImportSpec.replaceWith(({ node }) => {

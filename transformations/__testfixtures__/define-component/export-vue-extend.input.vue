@@ -3,15 +3,15 @@
 </template>
 
 <script>
-import Vue from "vue";
+import Vue from 'vue'
 
 export default Vue.extend({
   data() {
     return {
-      greeting: "Hello"
-    };
-  }
-});
+      greeting: 'Hello',
+    }
+  },
+})
 </script>
 
 <style scoped>

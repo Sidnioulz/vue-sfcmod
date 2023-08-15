@@ -3,7 +3,7 @@ import type { ASTTransformation } from '../src/wrapAstTransformation'
 
 export const transformAST: ASTTransformation = ({ root, j }) => {
   // find the Vue.nextTick(...)
-  const nextTickCalls = root.find(j.CallExpression, n => {
+  const nextTickCalls = root.find(j.CallExpression, (n) => {
     return (
       n.callee.type === 'MemberExpression' &&
       n.callee.property.name === 'nextTick' &&
@@ -14,13 +14,16 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   if (nextTickCalls.length) {
     // add import nextTick
     const addImport = require('./add-import')
-    addImport.transformAST({ root, j }, {
-      specifier: {
-        type: 'named',
-        imported: 'nextTick'
+    addImport.transformAST(
+      { root, j },
+      {
+        specifier: {
+          type: 'named',
+          imported: 'nextTick',
+        },
+        source: 'vue',
       },
-      source: 'vue'
-    })
+    )
 
     nextTickCalls.replaceWith(({ node }) => {
       const el = node.arguments[0]

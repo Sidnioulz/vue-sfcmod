@@ -30,7 +30,7 @@ type Params = {
 
 export const transformAST: ASTTransformation<Params> = (
   { root, j },
-  { specifier, source }
+  { specifier, source },
 ) => {
   let localBinding: string
   if (specifier.type === 'named') {
@@ -43,7 +43,7 @@ export const transformAST: ASTTransformation<Params> = (
     specifiers: (
       arr: Array<
         ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier
-      >
+      >,
     ) =>
       // @ts-ignore there's a bug in ast-types definition, the `local` should be non-nullable
       arr.some((s) => s.local.name === localBinding),
@@ -61,7 +61,7 @@ export const transformAST: ASTTransformation<Params> = (
   } else if (specifier.type === 'named') {
     newImportSpecifier = j.importSpecifier(
       j.identifier(specifier.imported),
-      j.identifier(localBinding)
+      j.identifier(localBinding),
     )
   } else {
     // namespace
@@ -82,7 +82,7 @@ export const transformAST: ASTTransformation<Params> = (
   } else {
     const newImportDecl = j.importDeclaration(
       [newImportSpecifier],
-      j.stringLiteral(source)
+      j.stringLiteral(source),
     )
 
     const lastImportDecl = root.find(j.ImportDeclaration).at(-1)

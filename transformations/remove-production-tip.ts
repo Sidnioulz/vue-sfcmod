@@ -8,7 +8,7 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
       j.MemberExpression.check(n.left) &&
       n.left.property.name === 'productionTip' &&
       n.left.object.property.name === 'config' &&
-      n.left.object.object.name === 'Vue'
+      n.left.object.object.name === 'Vue',
   )
   productionTipAssignment.remove()
 }

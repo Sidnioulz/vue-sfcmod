@@ -24,7 +24,7 @@ defineInlineTest(
     }
   }
 };`,
-  'add emit declaration'
+  'add emit declaration',
 )
 
 defineInlineTest(
@@ -50,7 +50,7 @@ defineInlineTest(
     }
   }
 }`,
-  'add emit declaration(has emits property but empty)'
+  'add emit declaration(has emits property but empty)',
 )
 
 defineInlineTest(
@@ -77,5 +77,5 @@ defineInlineTest(
     }
   }
 }`,
-  'add emit declaration(has emits property and not empty)'
+  'add emit declaration(has emits property and not empty)',
 )

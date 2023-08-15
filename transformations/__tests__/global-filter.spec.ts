@@ -14,7 +14,7 @@ app.config.globalProperties.$filters = {
     return value
   }
 };`,
-  'transform global filter'
+  'transform global filter',
 )
 
 defineInlineTest(
@@ -29,9 +29,5 @@ Vue.filter('capitalize', function(value) {
   return value
 })
 `,
-  'transform global filter(no effect and will warn)'
+  'transform global filter(no effect and will warn)',
 )
-
-
-
-

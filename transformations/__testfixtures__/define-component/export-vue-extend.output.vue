@@ -3,15 +3,15 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   data() {
     return {
-      greeting: "Hello"
-    };
-  }
-});
+      greeting: 'Hello',
+    }
+  },
+})
 </script>
 
 <style scoped>

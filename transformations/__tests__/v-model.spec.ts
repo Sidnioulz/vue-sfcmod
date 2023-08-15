@@ -37,9 +37,8 @@ defineInlineTest(
     }
   }
 };`,
-  'transformation v-mode'
+  'transformation v-mode',
 )
-
 
 defineInlineTest(
   transform,
@@ -65,7 +64,7 @@ defineInlineTest(
     }
   }
 }`,
-  'transformation v-mode no methods option'
+  'transformation v-mode no methods option',
 )
 
 defineInlineTest(
@@ -103,5 +102,5 @@ defineInlineTest(
     }
   }
 };`,
-  'transformation v-mode with a method call'
+  'transformation v-mode with a method call',
 )

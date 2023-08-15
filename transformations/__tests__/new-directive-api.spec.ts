@@ -16,7 +16,7 @@ defineInlineTest(
   updated: function onComponentUdpated () {},
   unmounted () { console.log('unbind') }
 })`,
-  'transform directive lifecycle hooks'
+  'transform directive lifecycle hooks',
 )
 
 defineInlineTest(
@@ -38,7 +38,7 @@ defineInlineTest(
 
   unmounted () { console.log('unbind') }
 })`,
-  'replace the `updated` hook with a __REMOVED__ comment'
+  'replace the `updated` hook with a __REMOVED__ comment',
 )
 
 // TODO: VNode API

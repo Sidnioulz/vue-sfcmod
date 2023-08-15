@@ -6,14 +6,16 @@ import type { VueTransformation } from './VueTransformation'
 export type JSTransformationModule =
   | JSTransformation
   | {
-    default: Transform
-    parser?: string | Parser
-  }
+      default: Transform
+      parser?: string | Parser
+    }
 
 export type VueTransformationModule =
   | VueTransformation
   | {
-    default: VueTransformation
-  }
+      default: VueTransformation
+    }
 
-export type TransformationModule = JSTransformationModule | VueTransformationModule
+export type TransformationModule =
+  | JSTransformationModule
+  | VueTransformationModule

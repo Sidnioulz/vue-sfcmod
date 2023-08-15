@@ -3,7 +3,7 @@ import type { ASTTransformation } from '../src/wrapAstTransformation'
 
 export const transformAST: ASTTransformation = ({ root, j }) => {
   // find the Vue.observable(state)
-  const observableCalls = root.find(j.CallExpression, n => {
+  const observableCalls = root.find(j.CallExpression, (n) => {
     return (
       n.callee.type === 'MemberExpression' &&
       n.callee.property.name === 'observable' &&
@@ -14,13 +14,16 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   if (observableCalls.length) {
     // add import reactive
     const addImport = require('./add-import')
-    addImport.transformAST({ root, j }, {
-      specifier: {
-        type: 'named',
-        imported: 'reactive'
+    addImport.transformAST(
+      { root, j },
+      {
+        specifier: {
+          type: 'named',
+          imported: 'reactive',
+        },
+        source: 'vue',
       },
-      source: 'vue'
-    })
+    )
 
     observableCalls.replaceWith(({ node }) => {
       const el = node.arguments[0]

@@ -6,7 +6,7 @@ import { defineInlineTest } from 'jscodeshift/src/testUtils'
 const printVueOptions: Transform = function (
   file,
   api,
-  { filename = 'test.js' }: { filename?: string } = {}
+  { filename = 'test.js' }: { filename?: string } = {},
 ) {
   const j = api.jscodeshift
   const root = j(file.source)
@@ -43,7 +43,7 @@ defineInlineTest(
       return { foo: 1 }
     }
 }`,
-  'should print default object export from a .vue file'
+  'should print default object export from a .vue file',
 )
 
 defineInlineTest(
@@ -60,7 +60,7 @@ defineInlineTest(
       return { foo: 1 }
     }
   }`,
-  'should print default variable export from a .vue file if it is actually an object'
+  'should print default variable export from a .vue file if it is actually an object',
 )
 
 // TODO: a `var` that is never re-assigned
@@ -81,7 +81,7 @@ defineInlineTest(
 
     template: '<div>foo: {foo}</div>'
 }`,
-  'should recognize the default export from a .js file, if it is an object and contains a `template` property'
+  'should recognize the default export from a .js file, if it is an object and contains a `template` property',
 )
 
 defineInlineTest(
@@ -100,7 +100,7 @@ defineInlineTest(
     },
     template: '<div>foo: {foo}</div>'
   }`,
-  'should recognize the default export from a .js file, if it is a const object and was initially assigned a `template` property'
+  'should recognize the default export from a .js file, if it is a const object and was initially assigned a `template` property',
 )
 
 defineInlineTest(
@@ -115,7 +115,7 @@ defineInlineTest(
   obj = {}
   export default obj`,
   '',
-  'should ignore the default export from a .js file, if it is ever reassigned'
+  'should ignore the default export from a .js file, if it is ever reassigned',
 )
 
 defineInlineTest(
@@ -138,7 +138,7 @@ defineInlineTest(
       return h("div", ["foo: ", this.foo]);
     }
 }`,
-  'should recognize the default export from a .js file, if it is an object and contains a `render` property'
+  'should recognize the default export from a .js file, if it is an object and contains a `render` property',
 )
 
 defineInlineTest(
@@ -146,7 +146,7 @@ defineInlineTest(
   {},
   `export default { foo: 1 }`,
   '',
-  'should ignore the default export from a .js file, if it is an object but has neither a `render` property or a `template` property'
+  'should ignore the default export from a .js file, if it is an object but has neither a `render` property or a `template` property',
 )
 
 defineInlineTest(
@@ -160,7 +160,7 @@ defineInlineTest(
     template: '#my-component',
     data() { return { foo: 1 } }
   }`,
-  'should recognize the argument of a `new Vue` call'
+  'should recognize the argument of a `new Vue` call',
 )
 
 defineInlineTest(
@@ -174,7 +174,7 @@ defineInlineTest(
     template: '#my-component',
     data() { return { foo: 1 } }
   }`,
-  'should recognize the argument of a `Vue.component` call'
+  'should recognize the argument of a `Vue.component` call',
 )
 
 defineInlineTest(
@@ -224,7 +224,7 @@ defineInlineTest(
     return h('div', { staticClass: 'vue-ui-disable' }, this.$scopedSlots.default())
   }
 }`,
-  'should recognize inline components via the `components` property'
+  'should recognize inline components via the `components` property',
 )
 
 defineInlineTest(
@@ -236,7 +236,7 @@ defineInlineTest(
   )
   `,
   `() => import('./my-async-component')`,
-  'should recognize simple async components'
+  'should recognize simple async components',
 )
 
 defineInlineTest(
@@ -248,7 +248,7 @@ defineInlineTest(
   )
   `,
   `() => (111, import('./my-async-component'))`,
-  'should recognize async components with a comma expression'
+  'should recognize async components with a comma expression',
 )
 
 defineInlineTest(
@@ -260,7 +260,7 @@ defineInlineTest(
   )
   `,
   `() => { return import('./my-async-component') }`,
-  'should recognize the async component as a arrow function with a function body'
+  'should recognize the async component as a arrow function with a function body',
 )
 
 defineInlineTest(
@@ -272,7 +272,7 @@ defineInlineTest(
   )
   `,
   `function () { return import('./my-async-component') }`,
-  'should recognize the async component as a function with a function body'
+  'should recognize the async component as a function with a function body',
 )
 
 defineInlineTest(
@@ -284,7 +284,7 @@ defineInlineTest(
   )
   `,
   `async function () { const componentName = await apiCall(); return await customLoad(componentName); }`,
-  'should recognize the async component as an async function'
+  'should recognize the async component as an async function',
 )
 
 defineInlineTest(
@@ -296,7 +296,7 @@ defineInlineTest(
   )
   `,
   `async () => await customLoad('./example.vue')`,
-  'should recognize the async component as an async arrow function'
+  'should recognize the async component as an async arrow function',
 )
 
 defineInlineTest(
@@ -313,7 +313,7 @@ defineInlineTest(
       template: '<div>I am async!</div>'
     }))
   }`,
-  'should recognize the async component as a function returning a new Promise'
+  'should recognize the async component as a function returning a new Promise',
 )
 
 defineInlineTest(
@@ -334,7 +334,7 @@ defineInlineTest(
   }
   return import('./my-async-component')
 }`,
-  'should recognize async component function with more than one return statements'
+  'should recognize async component function with more than one return statements',
 )
 
 defineInlineTest(
@@ -360,7 +360,7 @@ defineInlineTest(
 }
 
 1: () => import('./async-example.vue')`,
-  'should recognize inline async components via the `components` property'
+  'should recognize inline async components via the `components` property',
 )
 
 // Vue.component(

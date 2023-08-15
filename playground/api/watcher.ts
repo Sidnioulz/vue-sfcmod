@@ -15,15 +15,17 @@ wss.on('connection', (ws) => {
   })
 })
 
-chokidar.watch(TRANS_DIR, {ignoreInitial: true}).on('all', (event, filepath) => {
-  const relative = path.relative(TRANS_DIR, filepath)
-  console.log(event, relative)
-  clients.forEach((ws) => {
-    ws.send(
-      JSON.stringify({
-        event,
-        path: relative,
-      })
-    )
+chokidar
+  .watch(TRANS_DIR, { ignoreInitial: true })
+  .on('all', (event, filepath) => {
+    const relative = path.relative(TRANS_DIR, filepath)
+    console.log(event, relative)
+    clients.forEach((ws) => {
+      ws.send(
+        JSON.stringify({
+          event,
+          path: relative,
+        }),
+      )
+    })
   })
-})

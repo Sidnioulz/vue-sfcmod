@@ -14,5 +14,5 @@ defineInlineTest(
 
   vm.$slots
   vm["$slots"]`,
-  'transform `$scopedSlots` to `$slots`'
+  'transform `$scopedSlots` to `$slots`',
 )

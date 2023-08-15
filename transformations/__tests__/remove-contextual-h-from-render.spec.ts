@@ -6,7 +6,7 @@ defineInlineTest(
   {},
   `export default { render: h => h("div", ["hello"]) };`,
   `import { h } from "vue";\nexport default { render: () => h("div", ["hello"]) };`,
-  'remove h from arrow functions'
+  'remove h from arrow functions',
 )
 
 defineInlineTest(
@@ -14,5 +14,5 @@ defineInlineTest(
   {},
   `export default { render(h) { return h("div", ["hello"]); } };`,
   `import { h } from "vue";\nexport default { render() { return h("div", ["hello"]); } };`,
-  'remove h from object methods'
+  'remove h from object methods',
 )

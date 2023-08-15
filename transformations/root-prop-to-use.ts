@@ -13,7 +13,7 @@ type Params = {
  */
 export const transformAST: ASTTransformation<Params> = (
   { root, j },
-  { rootPropName }
+  { rootPropName },
 ) => {
   const appRoots = root.find(j.CallExpression, (node: N.CallExpression) => {
     if (
@@ -40,7 +40,7 @@ export const transformAST: ASTTransformation<Params> = (
     const rootProps = createAppCall.arguments[0] as N.ObjectExpression
     const propertyIndex = rootProps.properties.findIndex(
       // @ts-ignore
-      (p) => p.key && p.key.name === rootPropName
+      (p) => p.key && p.key.name === rootPropName,
     )
 
     if (propertyIndex === -1) {
@@ -50,12 +50,12 @@ export const transformAST: ASTTransformation<Params> = (
     // @ts-ignore
     const [{ value: pluginInstance }] = rootProps.properties.splice(
       propertyIndex,
-      1
+      1,
     )
 
     return j.callExpression(
       j.memberExpression(createAppCall, j.identifier('use')),
-      [pluginInstance]
+      [pluginInstance],
     )
   })
 }

@@ -10,9 +10,9 @@ export type ASTTransformation<Params = void> = {
   (context: Context, params: Params): void
 }
 
-export default function astTransformationToJSCodeshiftModule<Params extends object | void>(
-  transformAST: ASTTransformation<Params>
-): Transform {
+export default function astTransformationToJSCodeshiftModule<
+  Params extends object | void,
+>(transformAST: ASTTransformation<Params>): Transform {
   const transform: Transform = (file, api, options: Params) => {
     const j = api.jscodeshift
     const root = j(file.source)

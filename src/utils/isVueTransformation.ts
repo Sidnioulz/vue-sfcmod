@@ -5,8 +5,7 @@ export function isVueTransformation(obj: unknown): obj is VueTransformation {
     return false
   }
 
-  return Object
-    .keys(obj)
-    .every((key) => (['script', 'template', 'style'].includes(key)))
-
+  return Object.keys(obj).every((key) =>
+    ['script', 'template', 'style'].includes(key),
+  )
 }

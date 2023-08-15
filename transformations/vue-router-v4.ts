@@ -37,7 +37,7 @@ export const transformAST: ASTTransformation = (context) => {
 
       if (!j.ObjectExpression.check(node.arguments[0])) {
         throw new Error(
-          'Currently, only object expressions passed to `new VueRouter` can be transformed.'
+          'Currently, only object expressions passed to `new VueRouter` can be transformed.',
         )
       }
 
@@ -57,7 +57,7 @@ export const transformAST: ASTTransformation = (context) => {
             historyMode = 'createMemoryHistory'
           } else {
             throw new Error(
-              `mode must be one of 'hash', 'history', or 'abstract'`
+              `mode must be one of 'hash', 'history', or 'abstract'`,
             )
           }
           return false
@@ -75,16 +75,16 @@ export const transformAST: ASTTransformation = (context) => {
         source: 'vue-router',
       })
       node.arguments[0].properties = node.arguments[0].properties.filter(
-        (p) => !!p
+        (p) => !!p,
       )
       node.arguments[0].properties.unshift(
         j.objectProperty(
           j.identifier('history'),
           j.callExpression(
             j.identifier(historyMode),
-            baseValue ? [baseValue] : []
-          )
-        )
+            baseValue ? [baseValue] : [],
+          ),
+        ),
       )
 
       return j.callExpression(j.identifier('createRouter'), node.arguments)

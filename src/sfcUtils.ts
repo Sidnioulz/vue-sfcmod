@@ -44,9 +44,11 @@ export function stringify(sfcDescriptor: SFCDescriptor) {
   const { template, script, scriptSetup, styles, customBlocks } = sfcDescriptor
 
   return (
-    ([template, script, scriptSetup, ...styles, ...customBlocks]
-      // discard blocks that don't exist
-      .filter((block) => block != null) as Array<NonNullable<SFCBlock>>)
+    (
+      [template, script, scriptSetup, ...styles, ...customBlocks]
+        // discard blocks that don't exist
+        .filter((block) => block != null) as Array<NonNullable<SFCBlock>>
+    )
       // sort blocks by source position
       .sort((a, b) => a.loc.start.offset - b.loc.start.offset)
       // figure out exact source positions of blocks
@@ -188,7 +190,7 @@ export function parse(
     sourceRoot = '',
     pad = false,
     compiler = CompilerDom,
-  }: SFCParseOptions = {}
+  }: SFCParseOptions = {},
 ): SFCParseResult {
   const sourceKey =
     source + sourceMap + filename + sourceRoot + pad + compiler.parse
@@ -225,7 +227,7 @@ export function parse(
               p.type === NodeTypes.ATTRIBUTE &&
               p.name === 'lang' &&
               p.value &&
-              p.value.content !== 'html'
+              p.value.content !== 'html',
           ))
       ) {
         return TextModes.RAWTEXT
@@ -251,7 +253,7 @@ export function parse(
           const templateBlock = (descriptor.template = createBlock(
             node,
             source,
-            false
+            false,
           ) as SFCTemplateBlock)
           templateBlock.ast = node
         } else {
@@ -277,8 +279,8 @@ export function parse(
           errors.push(
             new SyntaxError(
               `<style vars> has been replaced by a new proposal: ` +
-              `https://github.com/vuejs/rfcs/pull/231`
-            )
+                `https://github.com/vuejs/rfcs/pull/231`,
+            ),
           )
         }
         descriptor.styles.push(styleBlock)
@@ -294,8 +296,8 @@ export function parse(
       errors.push(
         new SyntaxError(
           `<script setup> cannot use the "src" attribute because ` +
-          `its syntax will be ambiguous outside of the component.`
-        )
+            `its syntax will be ambiguous outside of the component.`,
+        ),
       )
       descriptor.scriptSetup = null
     }
@@ -303,8 +305,8 @@ export function parse(
       errors.push(
         new SyntaxError(
           `<script> cannot use the "src" attribute when <script setup> is ` +
-          `also present because they must be processed together.`
-        )
+            `also present because they must be processed together.`,
+        ),
       )
       descriptor.script = null
     }
@@ -318,7 +320,7 @@ export function parse(
           source,
           block.content,
           sourceRoot,
-          !pad || block.type === 'template' ? block.loc.start.line - 1 : 0
+          !pad || block.type === 'template' ? block.loc.start.line - 1 : 0,
         )
       }
     }
@@ -338,11 +340,12 @@ export function parse(
 
 function createDuplicateBlockError(
   node: ElementNode,
-  isScriptSetup = false
+  isScriptSetup = false,
 ): CompilerError {
   const err = new SyntaxError(
-    `Single file component can contain only one <${node.tag}${isScriptSetup ? ` setup` : ``
-    }> element`
+    `Single file component can contain only one <${node.tag}${
+      isScriptSetup ? ` setup` : ``
+    }> element`,
   ) as CompilerError
   err.loc = node.loc
   return err
@@ -351,7 +354,7 @@ function createDuplicateBlockError(
 function createBlock(
   node: ElementNode,
   source: string,
-  pad: SFCParseOptions['pad']
+  pad: SFCParseOptions['pad'],
 ): SFCBlock {
   const type = node.tag
   let { start, end } = node.loc
@@ -385,12 +388,12 @@ function createBlock(
         block.src = p.value && p.value.content
       } else if (type === 'style') {
         if (p.name === 'scoped') {
-          ; (block as SFCStyleBlock).scoped = true
+          ;(block as SFCStyleBlock).scoped = true
         } else if (p.name === 'module') {
-          ; (block as SFCStyleBlock).module = attrs[p.name]
+          ;(block as SFCStyleBlock).module = attrs[p.name]
         }
       } else if (type === 'script' && p.name === 'setup') {
-        ; (block as SFCScriptBlock).setup = attrs.setup
+        ;(block as SFCScriptBlock).setup = attrs.setup
       }
     }
   })
@@ -406,7 +409,7 @@ function generateSourceMap(
   source: string,
   generated: string,
   sourceRoot: string,
-  lineOffset: number
+  lineOffset: number,
 ): RawSourceMap {
   const map = new SourceMapGenerator({
     file: filename.replace(/\\/g, '/'),
@@ -440,7 +443,7 @@ function generateSourceMap(
 function padContent(
   content: string,
   block: SFCBlock,
-  pad: SFCParseOptions['pad']
+  pad: SFCParseOptions['pad'],
 ): string {
   content = content.slice(0, block.loc.start.offset)
   if (pad === 'space') {

@@ -40,9 +40,9 @@ export const transformAST: ASTTransformation = (context) => {
       return j.callExpression(
         j.memberExpression(
           j.identifier(localVuex),
-          j.identifier('createStore')
+          j.identifier('createStore'),
         ),
-        node.arguments
+        node.arguments,
       )
     })
   }

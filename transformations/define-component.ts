@@ -12,7 +12,7 @@ export const transformAST: ASTTransformation<Params | undefined> = (
   context,
   { useCompositionApi }: Params = {
     useCompositionApi: false,
-  }
+  },
 ) => {
   const { root, j, filename } = context
   const importDefineComponent = () =>
@@ -57,7 +57,7 @@ export const transformAST: ASTTransformation<Params | undefined> = (
     importDefineComponent()
     defaultExport.nodes()[0].declaration = j.callExpression(
       j.identifier('defineComponent'),
-      [declarationNode]
+      [declarationNode],
     )
     removeExtraneousImport(context, { localBinding: 'Vue' })
   }

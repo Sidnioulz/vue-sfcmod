@@ -15,7 +15,11 @@ import runTransformation from '../src/runTransformation'
 const debug = createDebug('vue-sfcmod')
 const log = console.log.bind(console)
 
-const { _: files, transformation: transformationName, params } = yargs
+const {
+  _: files,
+  transformation: transformationName,
+  params,
+} = yargs
   .usage('Usage: $0 [file pattern]')
   .option('transformation', {
     alias: 't',
@@ -46,7 +50,7 @@ async function main() {
       const result = runTransformation(
         fileInfo,
         transformationModule,
-        params as object
+        params as object,
       )
       fs.writeFileSync(p, result)
     } catch (e) {
@@ -69,7 +73,7 @@ function loadTransformationModule(nameOrPath: string) {
   const customModulePath = path.resolve(process.cwd(), nameOrPath)
   if (fs.existsSync(customModulePath)) {
     const requireFunc = Module.createRequire(
-      path.resolve(process.cwd(), './package.json')
+      path.resolve(process.cwd(), './package.json'),
     )
     // TODO: interop with ES module
     // TODO: fix absolute path

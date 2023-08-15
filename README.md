@@ -6,10 +6,10 @@
 
 This project couldn't exist without the prior work done by [vue-codemod](https://github.com/vuejs/vue-codemod). This repository started as a fork of `vue-codemod`. The decision to fork was made because:
 
-* `vue-codemod` appears to be unmaintained since 2021
-* `vue-codemod` supports both Vue 2 and Vue 3 whereas this project wants a smaller maintenance surface and only supports Vue 3
-* This project targets the whole of SFC files, not just JavaScript
-* `vue-codemod` ships and maintains transform scripts, whereas this project aims to provide a raw codemodding framework rather than pre-built codemods
+- `vue-codemod` appears to be unmaintained since 2021
+- `vue-codemod` supports both Vue 2 and Vue 3 whereas this project wants a smaller maintenance surface and only supports Vue 3
+- This project targets the whole of SFC files, not just JavaScript
+- `vue-codemod` ships and maintains transform scripts, whereas this project aims to provide a raw codemodding framework rather than pre-built codemods
 
 ## Command Line Usage
 

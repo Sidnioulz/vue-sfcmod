@@ -2,7 +2,9 @@
   <div class="grid grid-rows-fix-auto h-auto overflow-hidden">
     <div class="bg-gray-200 p-1 border-grey-700 border-0 border-b flex">
       <slot name="title">
-        <div class="text-gray-600 text-xs m-auto px-2">{{title || filepath}}</div>
+        <div class="text-gray-600 text-xs m-auto px-2">
+          {{ title || filepath }}
+        </div>
         <OpenInEditor :filepath="filepath" />
       </slot>
       <div class="flex-auto" />
@@ -10,7 +12,11 @@
         <slot name="actions"></slot>
       </div>
     </div>
-    <CodeMirror v-model:code="code" :options="cmOptions" class="h-auto overflow-auto" />
+    <CodeMirror
+      v-model:code="code"
+      :options="cmOptions"
+      class="h-auto overflow-auto"
+    />
   </div>
 </template>
 
@@ -72,7 +78,7 @@ export default defineComponent({
       () => [code.value, original.value],
       ([c, o]) => {
         fileChanged.value = c !== o
-      }
+      },
     )
 
     watch(() => props.filepath, loadFile, { immediate: true })

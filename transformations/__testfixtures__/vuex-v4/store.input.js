@@ -1,11 +1,11 @@
-import { Store } from 'vuex';
+import { Store } from 'vuex'
 
 const store = new Store({
-  state () {
+  state() {
     return {
-      count: 1
+      count: 1,
     }
-  }
-});
+  },
+})
 
-export default store;
+export default store
