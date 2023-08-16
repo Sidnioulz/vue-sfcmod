@@ -1,8 +1,0 @@
-{
-  "extends": "../tsconfig.json",
-  "exclude": [],
-  "compilerOptions": {
-    "lib": ["ES2020", "DOM"],
-    "noImplicitAny": false
-  }
-}
