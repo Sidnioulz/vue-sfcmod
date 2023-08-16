@@ -5,7 +5,7 @@ import Module from 'module'
 import * as path from 'path'
 
 import createDebug from 'debug'
-import * as globby from 'globby'
+import { globbySync } from 'globby'
 import * as yargs from 'yargs'
 
 import runTransformation from '../src/runTransformation'
@@ -47,7 +47,7 @@ function loadTransformationModule(nameOrPath: string) {
 
 // TODO: port the `Runner` interface of jscodeshift
 async function main() {
-  const resolvedPaths = globby.sync(files as string[])
+  const resolvedPaths = globbySync(files as string[])
   const transformationModule = loadTransformationModule(transformationName)
 
   log(`Processing ${resolvedPaths.length} files…`)
