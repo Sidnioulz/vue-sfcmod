@@ -90,6 +90,7 @@ module.exports = {
     '@typescript-eslint/no-shadow': 'error',
     '@typescript-eslint/no-use-before-define': 'error',
     'arrow-body-style': 'off',
+    'class-methods-use-this': 'off',
     'prefer-arrow-callback': 'off',
     quotes: ['error', 'single', { allowTemplateLiterals: false, avoidEscape: true }],
   },
