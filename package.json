@@ -20,6 +20,7 @@
   ],
   "scripts": {
     "build": "rm -rf dist && rollup -c",
+    "build:watch": "yarn build --watch",
     "precli": "[[ -d dist/bin/ ]] || yarn build",
     "cli": "node dist/bin/vue-sfcmod.js",
     "example": "./examples/run.sh",
