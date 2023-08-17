@@ -1,3 +1,3 @@
-export type { VueTransformation } from './src/types/VueTransformation'
+export type { VueTransformation } from '~/types/VueTransformation'
 
-export { default as runTransformation } from './src/runTransformation'
+export { default as runTransformation } from '~/runTransformation'

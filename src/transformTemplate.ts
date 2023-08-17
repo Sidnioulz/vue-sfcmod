@@ -1,10 +1,10 @@
-import debug from './debug'
-import type { TemplateTransformation } from './types/TemplateTransformation'
-import type { TransformationDescriptor } from './types/TransformationDescriptor'
+import debug from '~/debug'
+import type { TemplateTransformation } from '~/types/TemplateTransformation'
+import type { TransformationBlock } from '~/types/TransformationBlock'
 
 export default function transformTemplate(
   transformation: TemplateTransformation,
-  descriptor: TransformationDescriptor,
+  descriptor: TransformationBlock,
   path: string,
   params: object,
 ): boolean {

@@ -1,19 +1,27 @@
 <template>
   <div class="flex-1 min-h-4 w-6">
     <blockquote class="p-[2.5rem]">
-      <IconHeart size="medium" />
-      This is a quote.
+      <IconQuote size="medium" />
+and when we speak we are afraid
+our words will not be heard
+nor welcomed
+but when we are silent
+we are still afraid
+So it is better to speak
+remembering
+we were never meant to survive
     </blockquote>
-    <RevButton variant="primary">Click me</RevButton>
+    <footer>― Audre Lorde, <cite>The Black Unicorn: Poems</cite></footer>
+    <Button>Share poem</Button>
   </div>
 </template>
 
-<script>
-import { RevButton, IconHeart } from '@backmarket/design-system'
+<script lang="ts">
+import { Button, IconQuote } from "@orgname/old-package";
 export default {
   components: {
-    RevButton,
-    IconHeart,
+    Button,
+    IconQuote,
   },
 }
 </script>

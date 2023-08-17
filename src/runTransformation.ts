@@ -1,15 +1,17 @@
-import debug from './debug'
-import { parse as parseSFC, stringify as stringifySFC } from './sfc'
-import transformCode from './transformCode'
-import transformStyle from './transformStyle'
-import transformTemplate from './transformTemplate'
-import type { FileInfo } from './types/FileInfo'
-import type { JSTransformation } from './types/JSTransformation'
-import type { StyleTransformation } from './types/StyleTransformation'
-import type { TemplateTransformation } from './types/TemplateTransformation'
-import type { TransformationDescriptor } from './types/TransformationDescriptor'
-import type { TransformationModule } from './types/TransformationModule'
-import { normaliseTransformationModule } from './utils/normaliseTransformationModule'
+import { parse } from '@vue/compiler-sfc'
+
+import debug from '~/debug'
+import { stringify as stringifySFC } from '~/stringifySfc'
+import transformCode from '~/transformCode'
+import transformStyle from '~/transformStyle'
+import transformTemplate from '~/transformTemplate'
+import type { FileInfo } from '~/types/FileInfo'
+import type { JSTransformation } from '~/types/JSTransformation'
+import type { StyleTransformation } from '~/types/StyleTransformation'
+import type { TemplateTransformation } from '~/types/TemplateTransformation'
+import type { TransformationBlock } from '~/types/TransformationBlock'
+import type { TransformationModule } from '~/types/TransformationModule'
+import { normaliseTransformationModule } from '~/utils/normaliseTransformationModule'
 
 export default function runTransformation(
   fileInfo: FileInfo,
@@ -25,10 +27,10 @@ export default function runTransformation(
 
   if (extension === '.vue') {
     debug('Source file is Vue SFC')
-    const { descriptor } = parseSFC(source, { filename: path })
+    const { descriptor } = parse(source, { filename: path })
     const transformsToRun: {
       runner: (...args: unknown[]) => boolean
-      descriptor: TransformationDescriptor
+      descriptor: TransformationBlock
       transform: JSTransformation | StyleTransformation | TemplateTransformation
     }[] = []
 

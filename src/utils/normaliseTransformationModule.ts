@@ -1,9 +1,8 @@
-import debug from '../debug'
-import type { JSTransformation } from '../types/JSTransformation'
-import type { TransformationModule } from '../types/TransformationModule'
-import type { VueTransformation } from '../types/VueTransformation'
-
-import { isVueTransformation } from './isVueTransformation'
+import debug from '~/debug'
+import type { JSTransformation } from '~/types/JSTransformation'
+import type { TransformationModule } from '~/types/TransformationModule'
+import type { VueTransformation } from '~/types/VueTransformation'
+import { isVueTransformation } from '~/utils/isVueTransformation'
 
 export function normaliseTransformationModule(
   transformationModule: TransformationModule,

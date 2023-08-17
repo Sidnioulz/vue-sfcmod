@@ -6,9 +6,9 @@ import * as path from 'path'
 
 import createDebug from 'debug'
 import { globbySync } from 'globby'
-import * as yargs from 'yargs'
+import yargs from 'yargs'
 
-import runTransformation from '../src/runTransformation'
+import { runTransformation } from 'vue-sfcmod'
 
 const debug = createDebug('vue-sfcmod')
 // eslint-disable-next-line no-console
@@ -18,7 +18,7 @@ const {
   _: files,
   transformation: transformationName,
   params,
-} = yargs
+} = yargs()
   .usage('Usage: $0 [file pattern]')
   .option('transformation', {
     alias: 't',
@@ -30,7 +30,8 @@ const {
     describe: 'Custom params to the transformation',
   })
   .demandOption('transformation')
-  .help().argv
+  .help()
+  .parseSync(process.argv.slice(2))
 
 function loadTransformationModule(nameOrPath: string) {
   const customModulePath = path.resolve(process.cwd(), nameOrPath)

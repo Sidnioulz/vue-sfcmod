@@ -1,55 +1,55 @@
 function getPathForImportName(name) {
   // Rev* imports are components.
   if (name.startsWith('Rev')) {
-    return `@ds/components/${name.replace('Rev', '')}`
+    return `@new-name/components/${name.replace('Rev', '')}`
   }
 
   // Icon* imports are icons.
   if (name.startsWith('Icon')) {
-    return `@ds/icons/${name}`
+    return `@new-name/icons/${name}`
   }
 
   switch (name) {
     case 'icons':
-      return '@ds/main'
+      return '@new-name/main'
     case 'illustrationPlugin':
-      return '@ds/plugins/illustration'
+      return '@new-name/plugins/illustration'
     case 'localePlugin':
-      return '@ds/plugins/locale'
+      return '@new-name/plugins/locale'
     case 'emitter':
-      return '@ds/utils/tracking'
+      return '@new-name/utils/tracking'
     case 'getPhoneNumberToE164':
     case 'getPhoneNumberInfos':
     case 'validPhoneNumber':
-      return '@ds/components/InputPhone'
+      return '@new-name/components/InputPhone'
     case 'makeValidate':
     case 'matchingRegExp':
     case 'maxLength':
     case 'minLength':
     case 'required':
     case 'FORM_VALID':
-      return '@ds/components/Form'
+      return '@new-name/components/Form'
     case 'closeModal':
     case 'openModal':
-      return '@ds/components/ModalBase'
+      return '@new-name/components/ModalBase'
     case 'resetForm':
     case 'setFormErrors':
     case 'setFormValues':
     case 'submitForm':
-      return '@ds/components/Form/Form.actions'
+      return '@new-name/components/Form/Form.actions'
     default:
       throw new Error(`Missing import name in codemod script: ${name}`)
   }
 }
 
-export default function transformer(file, api) {
+module.exports = function transformer(file, api) {
   const j = api.jscodeshift
   const root = j(file.source)
 
-  // split @backmarket/design-system imports
+  // split @orgname/old-package imports
   root
     .find(j.ImportDeclaration)
-    .filter((node) => node.value.source.value === '@backmarket/design-system')
+    .filter((node) => node.value.source.value === '@orgname/old-package')
     .find(j.ImportSpecifier)
     .forEach((path) => {
       const localName = path.value.local.name
@@ -69,7 +69,7 @@ export default function transformer(file, api) {
   // rewrite dynamic imports
   root
     .find(j.ImportExpression)
-    .filter((node) => node.value.source.value?.startsWith('@backmarket/design-system/dist/ssr'))
+    .filter((node) => node.value.source.value?.startsWith('@orgname/old-package/dist/ssr'))
     .forEach((path) => {
       const localName = path.value.source.value.split('/').at(-1)
       const correctedPath = getPathForImportName(localName)
@@ -77,10 +77,10 @@ export default function transformer(file, api) {
       path.replace(j.importExpression(j.literal(correctedPath)), j.literal(localName))
     })
 
-  // remove empty @backmarket/design-system imports
+  // remove empty @orgname/old-package imports
   root
     .find(j.ImportDeclaration)
-    .filter((node) => node.value.source.value === '@backmarket/design-system')
+    .filter((node) => node.value.source.value === '@orgname/old-package')
     .filter((node) => node.value.specifiers.length === 0)
     .remove()
 
@@ -96,7 +96,7 @@ export default function transformer(file, api) {
             name: 'mock',
           },
         },
-        arguments: [{ value: '@backmarket/design-system' }],
+        arguments: [{ value: '@orgname/old-package' }],
       },
     })
     .forEach((path) => {
@@ -108,7 +108,7 @@ export default function transformer(file, api) {
          *
          * @example
          * {
-         *   '@ds/components/ModalBase': ['openModal', 'closeModal']
+         *   '@new-name/components/ModalBase': ['openModal', 'closeModal']
          * }
          */
         const mockedExports = arrowFunction.body.properties
@@ -129,13 +129,13 @@ export default function transformer(file, api) {
            *
            * @example
            * {
-           *  ...jest.requireActual('@ds/components/Modal')
+           *  ...jest.requireActual('@new-name/components/Modal')
            *  closeModal: jest.fn()
            * }
            */
           const mockedProperties = arrowFunction.body.properties.reduce((acc, curr) => {
             if (curr.type === 'SpreadElement') {
-              // we rewrite the import path in the spread element ...jest.requireActual('@backmarket/design-system')
+              // we rewrite the import path in the spread element ...jest.requireActual('@orgname/old-package')
               acc.push(
                 j.spreadElement(j.callExpression(curr.argument.callee, [j.literal(exportPath)])),
               )
@@ -150,8 +150,8 @@ export default function transformer(file, api) {
            * Build the full mocked import
            *
            * @example
-           * jest.mock('@ds/components/Modal', () => ({
-           *  ...jest.requireActual('@ds/components/Modal')
+           * jest.mock('@new-name/components/Modal', () => ({
+           *  ...jest.requireActual('@new-name/components/Modal')
            *  closeModal: jest.fn()
            * }))
            */

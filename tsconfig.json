@@ -4,8 +4,8 @@
     "outDir": "dist",
     "declaration": true,
     "target": "ES2022",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
     "allowJs": false,
     "noUnusedLocals": true,
     "strictNullChecks": true,
@@ -19,8 +19,8 @@
     "types": ["jest", "jscodeshift", "node"],
     "rootDir": ".",
     "paths": {
-      "~*": ["src/*"]
+      "~/*": ["./src/*.ts"]
     }
   },
-  "exclude": ["dist", "playground", "**/__tests__"]
+  "exclude": ["dist", "examples", "**/__tests__"]
 }

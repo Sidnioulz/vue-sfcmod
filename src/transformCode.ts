@@ -1,14 +1,14 @@
 import jscodeshift from 'jscodeshift'
 // @ts-expect-error getParser is not directly exported and thus not well typed
-import getParser from 'jscodeshift/src/getParser'
+import getParser from 'jscodeshift/src/getParser.js'
 
-import debug from './debug'
-import type { JSTransformation } from './types/JSTransformation'
-import type { TransformationDescriptor } from './types/TransformationDescriptor'
+import debug from '~/debug'
+import type { JSTransformation } from '~/types/JSTransformation'
+import type { TransformationBlock } from '~/types/TransformationBlock'
 
 export default function transformCode(
   transformation: JSTransformation,
-  descriptor: TransformationDescriptor,
+  descriptor: TransformationBlock,
   path: string,
   params: object,
 ): boolean {

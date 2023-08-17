@@ -27,6 +27,7 @@ module.exports = {
     'import/resolver': {
       typescript: true,
     },
+    'import/core-modules': ['vue', '@vue/compiler-core', '@vue/compiler-dom', '@vue/compiler-sfc'],
   },
 
   rules: {
@@ -92,6 +93,14 @@ module.exports = {
       files: ['**/*.cjs'],
       rules: {
         '@typescript-eslint/no-var-requires': 'off',
+      },
+    },
+    {
+      files: ['examples/Input*'],
+      rules: {
+        'no-console': 'off',
+        'no-debugger': 'off',
+        'import/no-extraneous-dependencies': 'off',
       },
     },
   ],

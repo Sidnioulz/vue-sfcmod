@@ -14,15 +14,18 @@ fi
 # Sanitise transform arg
 transformPath="${1}"
 if [ ! -f "$transformPath" ]; then
-  if [ -f "examples/${transformPath}/transformation.js" ]; then
-    transformPath="examples/${transformPath}/transformation.js"
+  if [ -f "examples/${transformPath}/transformation.cjs" ]; then
+    transformPath="examples/${transformPath}/transformation.cjs"
   else
     printError "Transform not found: $transformPath"
   fi
 fi
 
+# Examples are used
 if [ "$#" -eq 1 ] && [ -d "examples/$1" ]; then
   inputPaths="examples/$1/Input.vue"
+
+# Paths to source files are used
 else
   # Compute all file paths. Vue-codemod doesn't honour --extensions
   # so we do it manually by only keeping js/vue files.

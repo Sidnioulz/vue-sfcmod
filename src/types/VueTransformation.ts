@@ -1,6 +1,6 @@
-import type { JSTransformation } from './JSTransformation'
-import type { StyleTransformation } from './StyleTransformation'
-import type { TemplateTransformation } from './TemplateTransformation'
+import type { JSTransformation } from '~/types/JSTransformation'
+import type { StyleTransformation } from '~/types/StyleTransformation'
+import type { TemplateTransformation } from '~/types/TemplateTransformation'
 
 export interface VueTransformation {
   /**

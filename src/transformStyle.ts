@@ -1,10 +1,10 @@
-import debug from './debug'
-import type { StyleTransformation } from './types/StyleTransformation'
-import type { TransformationDescriptor } from './types/TransformationDescriptor'
+import debug from '~/debug'
+import type { StyleTransformation } from '~/types/StyleTransformation'
+import type { TransformationBlock } from '~/types/TransformationBlock'
 
 export default function transformStyle(
   transformation: StyleTransformation,
-  descriptor: TransformationDescriptor,
+  descriptor: TransformationBlock,
   path: string,
   params: object,
 ): boolean {

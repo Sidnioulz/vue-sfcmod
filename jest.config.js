@@ -12,6 +12,6 @@ export default {
   testEnvironment: 'node',
   testPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/'],
   moduleNameMapper: {
-    '~': '<rootDir>/src/',
+    '^~/(.*)': '<rootDir>/src/$1.ts',
   },
 }
