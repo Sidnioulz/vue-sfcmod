@@ -8,7 +8,7 @@ import createDebug from 'debug'
 import { globbySync } from 'globby'
 import yargs from 'yargs'
 
-import { runTransformation } from 'vue-sfcmod'
+import runTransformation from '~/runTransformation'
 
 const debug = createDebug('vue-sfcmod')
 // eslint-disable-next-line no-console
