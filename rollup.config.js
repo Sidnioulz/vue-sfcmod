@@ -4,6 +4,14 @@ import commonjs from 'rollup-plugin-commonjs'
 import nodeExternals from 'rollup-plugin-node-externals'
 import vue from 'rollup-plugin-vue'
 
+const vueCorePackage = [
+  'vue',
+  '@vue/compiler-core',
+  '@vue/compiler-dom',
+  '@vue/compiler-sfc',
+  '@vue/shared',
+]
+
 export default {
   input: ['index.ts', 'bin/vue-sfcmod.ts'],
   output: {
@@ -15,16 +23,13 @@ export default {
   },
   plugins: [
     resolve({
-      dedupe: ['vue', '@vue/compiler-core', '@vue/compiler-dom', '@vue/compiler-sfc'],
+      dedupe: vueCorePackage,
       mainFields: ['node', 'module', 'main'],
     }),
     commonjs(),
     nodeExternals({
       deps: true,
-      include: ['vue', '@vue/compiler-core', '@vue/compiler-dom', '@vue/compiler-sfc'],
-      exclude: [
-        // 'yargs',
-      ],
+      include: vueCorePackage,
     }),
     vue({
       target: 'node',
