@@ -96,11 +96,19 @@ module.exports = {
       },
     },
     {
-      files: ['examples/Input*'],
+      files: ['examples/**/Input*'],
       rules: {
         'no-console': 'off',
         'no-debugger': 'off',
         'import/no-extraneous-dependencies': 'off',
+      },
+    },
+    {
+      files: ['examples/**/transformation.cjs'],
+      rules: {
+        'no-console': 'warn',
+        'no-debugger': 'warn',
+        'no-param-reassign': 'off',
       },
     },
   ],
