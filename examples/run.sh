@@ -23,10 +23,12 @@ fi
 
 # Examples are used
 if [ "$#" -eq 1 ] && [ -d "examples/$1" ]; then
+  isExample=true
   inputPaths="examples/$1/Input.vue"
 
 # Paths to source files are used
 else
+  isExample=false
   # Compute all file paths. Vue-codemod doesn't honour --extensions
   # so we do it manually by only keeping js/vue files.
   allFiles=()
@@ -42,3 +44,7 @@ else
 fi
 
 yarn cli $inputPaths -t $transformPath
+yarn format:staged $inputPaths
+if [ isExample ]; then
+  git diff $inputPaths
+fi
