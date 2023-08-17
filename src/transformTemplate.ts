@@ -15,5 +15,5 @@ export default function transformTemplate(
     debug('Not supported yet, no template changes')
   }
 
-  return false
+  return processTransformResult(descriptor, null)
 }

@@ -3,6 +3,7 @@ import jscodeshift from 'jscodeshift'
 import getParser from 'jscodeshift/src/getParser.js'
 
 import debug from '~/debug'
+import processTransformResult from '~/processTransformResult'
 import type { JSTransformation } from '~/types/JSTransformation'
 import type { TransformationBlock } from '~/types/TransformationBlock'
 
@@ -41,16 +42,6 @@ export default function transformCode(
   }
 
   const out = transformation({ path, source: descriptor.content }, api, params)
-  debug('Done running jscodeshift transform')
 
-  if (out && out !== descriptor.content) {
-    debug('Updating descriptor with transformed content')
-    descriptor.content = out
-
-    return true
-  }
-
-  debug('No code changes')
-
-  return false
+  return processTransformResult(descriptor, out)
 }
