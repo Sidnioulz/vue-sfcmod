@@ -34,22 +34,18 @@ yarn add -D vue-sfcmod
 
 - [x] Basic testing setup and a dummy CLI
 - [x] Support applying `jscodeshift` codemods to `.vue` files
-- [x] Provide a programmatic interface for usage in `vue-cli-plugin-vue-next`
-- [x] Set up tests
-- [x] Built-in transformations need to support TypeScript
-- [ ] Define an interface for transformation of template blocks ([`vue-eslint-parser`](https://github.com/mysticatea/vue-eslint-parser/) or [vue-template-ast-to-template](https://github.com/CommanderXL/vue-template-ast-to-template))
-- [ ] Define an interface for transformation of style blocks (TBC)
-- [x] A playground for writing transformations - `yarn playground` and visit http://localhost:3000
+- [x] TypeScript support
+- [x] `<script setup>` support
+- [ ] Branch test coverage above 80%
+- [ ] `<template>` support ([`vue-eslint-parser`](https://github.com/mysticatea/vue-eslint-parser/) or [vue-template-ast-to-template](https://github.com/CommanderXL/vue-template-ast-to-template))
+- [ ] `<style>` support
+- [ ] Working examples
 
-## Custom Transformation
+## Javascript/Typescript transformation
 
 See https://github.com/facebook/jscodeshift#transform-module
 
 ## Post Transformation
 
-- Running transformations will generally ruin the formatting of your files. A recommended way to solve that problem is by using [Prettier](https://prettier.io/) or `eslint --fix`.
-- Even after running prettier its possible to have unnecessary new lines added/removed. This can be solved by ignoring white spaces while staging the changes in git.
+Running transformations will generally ruin the formatting of your files. A recommended way to solve that problem is by using [Prettier](https://prettier.io/) or `eslint --fix`.
 
-```sh
-git diff --ignore-blank-lines | git apply --cached
-```
