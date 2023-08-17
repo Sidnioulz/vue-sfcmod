@@ -27,7 +27,13 @@ module.exports = {
     'import/resolver': {
       typescript: true,
     },
-    'import/core-modules': ['vue', '@vue/compiler-core', '@vue/compiler-dom', '@vue/compiler-sfc'],
+    'import/core-modules': [
+      'vue',
+      '@vue/compiler-core',
+      '@vue/compiler-dom',
+      '@vue/compiler-sfc',
+      '@vue/shared',
+    ],
   },
 
   rules: {
