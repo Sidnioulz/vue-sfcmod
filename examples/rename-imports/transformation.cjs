@@ -1,3 +1,10 @@
+// ------------------------------------------------------------- //
+// This example transforms the import of multiple named exports
+// from an index file into individual subpath imports, applying a
+// hardcoded matching map. It also splits jest.mock() calls to the
+// original index.
+// ------------------------------------------------------------- //
+
 function getPathForImportName(name) {
   // Rev* imports are components.
   if (name.startsWith('Rev')) {
