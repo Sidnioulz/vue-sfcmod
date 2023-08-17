@@ -2,7 +2,6 @@
 
 ![Status: Experimental](https://img.shields.io/badge/status-experimental-thistle) ![GitHub last commit](https://img.shields.io/github/last-commit/Sidnioulz/vue-sfcmod/main) ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/Sidnioulz/vue-sfcmod) [![Continuous Integration](https://github.com/Sidnioulz/vue-sfcmod/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/Sidnioulz/vue-sfcmod/actions/workflows/continuous-integration.yml) ![npm](https://img.shields.io/npm/v/vue-sfcmod)
 
-
 `vue-sfcmod` is a framework for codemodding Vue 3 Single-File Components. It aims to support `<script>` codemods for both JavaScript and TypeScript with [JSCodeshift](https://github.com/facebook/jscodeshift), `<template>` codemods with the [Vue compiler](https://github.com/vuejs/core/tree/main/packages/compiler-sfc) and `<style>` codemods with tools to be determined.
 
 This project couldn't exist without the prior work done by [vue-codemod](https://github.com/vuejs/vue-codemod). This repository started as a fork of `vue-codemod`. The decision to fork was made because:
@@ -48,4 +47,3 @@ See https://github.com/facebook/jscodeshift#transform-module
 ## Post Transformation
 
 Running transformations will generally ruin the formatting of your files. A recommended way to solve that problem is by using [Prettier](https://prettier.io/) or `eslint --fix`.
-
