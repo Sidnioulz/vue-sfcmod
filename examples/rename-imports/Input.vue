@@ -12,15 +12,15 @@
       we were never meant to survive
     </blockquote>
     <footer>― Audre Lorde, <cite>The Black Unicorn: Poems</cite></footer>
-    <Button>Share poem</Button>
+    <CmpButton>Share poem</CmpButton>
   </div>
 </template>
 
 <script lang="ts">
-import { Button, IconQuote } from '@orgname/old-package'
+import { CmpButton, IconQuote } from '@orgname/old-package'
 export default {
   components: {
-    Button,
+    CmpButton,
     IconQuote,
   },
 }

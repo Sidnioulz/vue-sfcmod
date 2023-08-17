@@ -7,8 +7,8 @@
 
 function getPathForImportName(name) {
   // Rev* imports are components.
-  if (name.startsWith('Rev')) {
-    return `@new-name/components/${name.replace('Rev', '')}`
+  if (name.startsWith('Cmp')) {
+    return `@new-name/components/${name.replace('Cmp', '')}`
   }
 
   // Icon* imports are icons.
