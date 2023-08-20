@@ -1,7 +1,7 @@
-import debug from '~/debug'
 import type { JSTransformation } from '~/types/JSTransformation'
 import type { TransformationModule } from '~/types/TransformationModule'
 import type { VueTransformation } from '~/types/VueTransformation'
+import debug from '~/utils/debug'
 import { isVueTransformation } from '~/utils/isVueTransformation'
 
 export function normaliseTransformationModule(
