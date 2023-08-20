@@ -11,6 +11,8 @@ This project couldn't exist without the prior work done by [vue-codemod](https:/
 - This project targets the whole of SFC files, not just JavaScript
 - `vue-codemod` ships and maintains transform scripts, whereas this project aims to provide a raw codemodding framework rather than pre-built codemods
 
+This project also takes inspiration from [vue-template-ast-to-template](https://github.com/CommanderXL/vue-template-ast-to-template), a Vue 2 template stringifier. `vue-sfcmod` was rewritten from scratch to target Vue 3 ASTs, however.
+
 ## Install
 
 ```bash
@@ -29,20 +31,54 @@ yarn add -D vue-sfcmod
 
 - `runTransformation(fileInfo, transformation, params)`
 
+## Known Limitations
+
+### Cannot combine v-text and children
+
+Elements using the [`v-text` directive](https://vuejs.org/api/built-in-directives.html#v-text) _and_ children are not supported. The Vue compiler does not compile children of elements that use the [`v-text` directive](https://vuejs.org/api/built-in-directives.html#v-text), so we cannot provide the content of children.
+
+### Cannot transform v-html content
+
+Content inside [`v-html` directives](https://vuejs.org/api/built-in-directives.html#v-html) is printed as is and cannot be transformed.
+
+### String style attributes are converted to JSON
+
+When strings are passed to [`style` attributes](https://vuejs.org/guide/essentials/class-and-style.html#binding-inline-styles), it is converted to JSON (and deduplicated in the process). This is done by the Vue compiler, and attempting to undo that conversion could result in bugs in the template codemod engine.
+
 ## Roadmap
 
-- [x] Basic testing setup and a dummy CLI
+### Script
+
 - [x] Support applying `jscodeshift` codemods to `.vue` files
-- [x] TypeScript support
-- [x] `<script setup>` support
+- [x] Support for TypeScript
+- [x] Support `<script setup>`
+
+### Template
+
+- [ ] Support `<template>` [#15](https://github.com/Sidnioulz/vue-sfcmod/issues/15)
+- [ ] Add an API to search for, edit, remove and inject nodes in template ASTs
+- [ ] Allow interpreting and modding JS expressions inside `<template>`
+
+### Style
+
+- [ ] Support `<style>` [#16](https://github.com/Sidnioulz/vue-sfcmod/issues/16)
+- [ ] Support :global, :slotted, etc
+- [ ] Support PostCSS and SCSS style tags
+
+### Project upkeep
+
+- [x] Basic testing setup and a dummy CLI
 - [ ] Branch test coverage above 80%
-- [ ] `<template>` support ([`vue-eslint-parser`](https://github.com/mysticatea/vue-eslint-parser/) or [vue-template-ast-to-template](https://github.com/CommanderXL/vue-template-ast-to-template))
-- [ ] `<style>` support
-- [ ] Working examples
+- [ ] Add working examples
+- [ ] Add semantic-release
 
 ## Javascript/Typescript transformation
 
 See https://github.com/facebook/jscodeshift#transform-module
+
+## Template transformation
+
+No API yet. You may manually modify the AST provided by the Vue SFC compiler.
 
 ## Post Transformation
 
