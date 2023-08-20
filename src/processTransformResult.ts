@@ -1,5 +1,5 @@
-import debug from '~/debug'
 import type { TransformationBlock } from '~/types/TransformationBlock'
+import debug from '~/utils/debug'
 
 export default function processTransformResult(
   descriptor: TransformationBlock,

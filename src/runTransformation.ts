@@ -1,6 +1,5 @@
 import { parse } from '@vue/compiler-sfc'
 
-import debug from '~/debug'
 import { stringify as stringifySFC } from '~/stringifySfc'
 import transformCode from '~/transformCode'
 import transformStyle from '~/transformStyle'
@@ -11,6 +10,7 @@ import type { StyleTransformation } from '~/types/StyleTransformation'
 import type { TemplateTransformation } from '~/types/TemplateTransformation'
 import type { TransformationBlock } from '~/types/TransformationBlock'
 import type { TransformationModule } from '~/types/TransformationModule'
+import debug from '~/utils/debug'
 import { normaliseTransformationModule } from '~/utils/normaliseTransformationModule'
 
 export default function runTransformation(

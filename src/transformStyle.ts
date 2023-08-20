@@ -1,7 +1,7 @@
-import debug from '~/debug'
 import processTransformResult from '~/processTransformResult'
 import type { StyleTransformation } from '~/types/StyleTransformation'
 import type { TransformationBlock } from '~/types/TransformationBlock'
+import debug from '~/utils/debug'
 
 export default function transformStyle(
   transformation: StyleTransformation,
