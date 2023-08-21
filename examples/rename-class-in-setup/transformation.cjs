@@ -22,7 +22,7 @@ function escapeRegex(klass) {
 }
 
 function preserveClass(klass) {
-  return ['flex', 'border'].includes(klass)
+  return [/^flex/, /^border/].some((kw) => klass.match(kw))
 }
 
 module.exports = function transformer(file, api) {
