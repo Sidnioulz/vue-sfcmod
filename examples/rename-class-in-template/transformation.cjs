@@ -21,7 +21,7 @@
 // }
 
 // function preserveClass(klass) {
-//   return ['flex', 'border'].includes(klass)
+//   return [/^flex/, /^border/].some((kw) => klass.match(kw))
 // }
 
 function transformer(file) {
