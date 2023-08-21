@@ -1,4 +1,5 @@
 import debug from '~/debug'
+import processTransformResult from '~/processTransformResult'
 import type { TemplateTransformation } from '~/types/TemplateTransformation'
 import type { TransformationBlock } from '~/types/TransformationBlock'
 
