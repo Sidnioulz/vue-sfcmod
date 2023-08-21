@@ -1,9 +1,10 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
+title: "[BUG] "
 labels: bug
 assignees: ''
+
 ---
 
 **Describe the bug**
@@ -16,21 +17,12 @@ Describe how to reproduce the issue. Make sure to include the source content _an
 - [ ] I've attached the transform function(s) that triggers the bug
 - [ ] I've provided the command used to trigger the bug
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
-
 **Desktop (please complete the following information):**
 
-- OS: [e.g. iOS]
-- CLI environment [e.g. local CLI, GitHub CI, GitLab CI]
-- Node Version [e.g. 18]
+- OS [e.g. iOS]: 
+- CLI environment [e.g. local CLI, GitHub CI, GitLab CI]: 
+- Node Version [e.g. 18]: 
+- Vue version [e.g. 3.3.0]: 
 
 **Additional context**
 Add any other context about the problem here.
-
-**Contribution**
-
-- [ ] I'd like to contribute a Pull Request for this issue
