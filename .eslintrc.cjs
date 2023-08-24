@@ -1,7 +1,6 @@
 module.exports = {
   env: {
     es2022: true,
-    jest: true,
     node: true,
   },
 
@@ -100,6 +99,12 @@ module.exports = {
       files: ['**/*.cjs'],
       rules: {
         '@typescript-eslint/no-var-requires': 'off',
+      },
+    },
+    {
+      files: ['jest.setup.ts'],
+      rules: {
+        'jest/no-export': 'off',
       },
     },
     {

@@ -11,16 +11,15 @@ function prepare(source: string) {
 }
 
 function makeTestFunction(testFn: CallableFunction) {
-  /* eslint-disable no-param-reassign */
-  testFn.only = (...args) => testFn(...args, test.only)
-  testFn.skip = (...args) => testFn(...args, test.skip)
-  testFn.todo = ((description: string) => test.todo(`${description}`)) as (
+  const augmentedFn = (...args) => testFn(...args)
+  augmentedFn.only = (...args) => testFn(...args, test.only)
+  augmentedFn.skip = (...args) => testFn(...args, test.skip)
+  augmentedFn.todo = ((description: string) => test.todo(`${description}`)) as (
     description: string,
     source: string,
   ) => void
-  /* eslint-enable no-param-reassign */
 
-  return testFn
+  return augmentedFn
 }
 
 const testUnequal = makeTestFunction(
@@ -132,7 +131,7 @@ describe('template', () => {
         'default scoped slot passing props',
         '<MyComponent v-slot="slotProps"><OtherComponent v-bind="slotProps" /></MyComponent>',
       )
-      testEqual.todo(
+      testEqual(
         'default scoped slot interpolating props',
         '<MyComponent v-slot="slotProps">{{ slotProps.text }} {{ slotProps.count }}</MyComponent>',
       )
@@ -158,7 +157,6 @@ describe('template', () => {
     })
 
     describe('events', () => {
-      // TODO https://vuejs.org/api/built-in-directives.html#v-on
       testEqual(
         '@event with arrow function',
         '<button @click="(e) => emit(\'clicked\', e.currentTarget)">Accept</button>',
@@ -292,8 +290,19 @@ describe('template', () => {
     describe('comments', () => {
       testEqual('Single-line comment', '// Comment \n<div>Hi</div>')
       testEqual('Multi-line comment', '/* Comment */<div>Hi</div>')
-      testEqual.todo('Multi-line in interpolation', '<div>Hi {{ foo /* Comment */ }}</div>')
+      testEqual('Multi-line in interpolation', '<div>Hi {{ foo /* Comment */ }}</div>')
       testEqual('Multi-line in dynamic prop', '<div :foo="bar /* Comment */">Hi</div>')
+    })
+
+    describe('CompoundExpression rewriting', () => {
+      testEqual('Interpolation', '<div>{{ foo }}</div>')
+      testEqual('Interpolation + Interpolation', '<div>{{ foo }}{{ bar }}</div>')
+      testEqual('Interpolation + space + Interpolation', '<div>{{ foo }} {{ bar }}</div>')
+      testEqual('SimpleExpression', '<MyComponent :foo="myVar" />')
+      testEqual('SimpleExpression + SimpleExpression', '<MyComponent :foo="var1 + var2" />')
+      testEqual('Text + Interpolation', '<div>Hello {{ foo }}</div>')
+      testEqual('Interpolation + Text', '<div>{{ foo }} World</div>')
+      testEqual('Text + Interpolation + Text', '<div>Hello {{ foo }} World</div>')
     })
   })
 })

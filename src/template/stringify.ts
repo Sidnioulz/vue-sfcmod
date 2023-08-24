@@ -18,6 +18,7 @@ import { NodeTypes } from '@vue/compiler-core'
 import { isVoidTag } from '@vue/shared'
 
 import { createAttribute, createDirective, isGenerated } from '~/template/api'
+import { registerExpressionNodes } from '~/template/codegen'
 import {
   clearCtx,
   isNotEmpty,
@@ -42,6 +43,7 @@ class TemplateStringifier {
 
   constructor(ast: RootNode) {
     this.ast = ast
+    registerExpressionNodes(ast)
   }
 
   /* -- ATTRIBUTES AND EXPRESSIONS -- */
@@ -56,6 +58,10 @@ class TemplateStringifier {
       // TODO: Identify JS expression type and exploit that
       // info in the stringifier to rebuild nodes manually.
       if (node.children) {
+        const hasInterpolations = node.children.some(
+          (child) => typeof child === 'object' && child.type === 5,
+        )
+
         return node.children
           .map((c) => {
             if (typeof c === 'string') {
@@ -67,6 +73,7 @@ class TemplateStringifier {
 
             return c.loc.source
           })
+          .filter((child) => (hasInterpolations ? child !== ' + ' : true))
           .join('')
       }
 
