@@ -10,6 +10,7 @@ import type {
   IfNode,
   InterpolationNode,
   RootNode,
+  SimpleExpressionNode,
   TemplateChildNode,
   TextCallNode,
   TextNode,
@@ -45,8 +46,46 @@ class TemplateStringifier {
   }
 
   /* -- ATTRIBUTES AND EXPRESSIONS -- */
+  hasImports(node: SimpleExpressionNode) {
+    return node.content.startsWith('_imports_') && node.constType === 3
+  }
+
+  processImports(node: SimpleExpressionNode) {
+    if (!this.hasImports(node)) {
+      return node.content
+    }
+
+    const importNode = this.ast.imports.find((imp) => {
+      if (typeof imp.exp === 'string') {
+        return imp.exp === node.content
+      }
+
+      if (isSimpleExpression(imp.exp)) {
+        return imp.exp.content === node.content
+      }
+
+      throw error(
+        'processImports: CompoundExpression import expressions are not supported yet',
+        imp,
+      )
+    })
+
+    if (importNode === undefined) {
+      throw error(
+        `processImports: Import in expression is not in the RootNode's imports: ${node.content}`,
+        this.ast,
+      )
+    }
+
+    return importNode.path
+  }
+
   genExpression(node: ExpressionNode) {
     if (isSimpleExpression(node)) {
+      if (this.hasImports(node)) {
+        return this.processImports(node)
+      }
+
       return clearCtx(node.content)
     }
 
@@ -56,6 +95,10 @@ class TemplateStringifier {
       // TODO: Identify JS expression type and exploit that
       // info in the stringifier to rebuild nodes manually.
       if (node.children) {
+        const hasInterpolations = node.children.some(
+          (child) => typeof child === 'object' && child.type === 5,
+        )
+
         return node.children
           .map((c) => {
             if (typeof c === 'string') {
@@ -67,6 +110,7 @@ class TemplateStringifier {
 
             return c.loc.source
           })
+          .filter((child) => (hasInterpolations ? child !== ' + ' : true))
           .join('')
       }
 
@@ -196,6 +240,15 @@ class TemplateStringifier {
 
   /* -- DIRECTIVES -- */
   genDirectivePrefix(prop: DirectiveNode): string {
+    // Here, we must handle an edge case where the Vue compiler mistakenly
+    // transforms perfectly fine attributes like src="http://foo" to directives
+    // and points their value to an "imports" expression on the RootNode.
+    // If the expression points to an import, we return no prefix so the
+    // stringification is correct.
+    if (prop.exp && isSimpleExpression(prop.exp) && this.hasImports(prop.exp)) {
+      return ''
+    }
+
     const shorthand =
       {
         slot: '#',

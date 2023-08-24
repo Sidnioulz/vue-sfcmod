@@ -2,6 +2,7 @@
 import type { Transform } from 'jscodeshift'
 
 import runTransformation from '../runTransformation'
+import { TemplateTransformation } from '../types/TemplateTransformation'
 
 const unreachableTransform: Transform = () => {
   throw new Error('This transform should never be invoked')
@@ -64,10 +65,16 @@ const retypeParameter: Transform = (file, api, options) => {
   return root.toSource(options?.printOptions || { quote: 'single', lineTerminator: '\n' })
 }
 
+const altToAriaLabel: TemplateTransformation = (ast) => {
+  return ast
+}
+
+// TODO: move all test code to fixtures
+
 const vueSfcSource = `<template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <img alt="Vue logo" src="./assets/logo.png" />
+    <HelloWorld msg="Welcome to Your Vue.js App" />
   </div>
 </template>
 <script>
@@ -94,8 +101,8 @@ export default {
 
 const vueSfcSetupSource = `<template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <img alt="Vue logo" src="./assets/logo.png" />
+    <HelloWorld msg="Welcome to Your Vue.js App" />
   </div>
 </template>
 <script setup>
@@ -119,8 +126,8 @@ defineOptions({
 
 const vueSfcLangTsSource = `<template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <img alt="Vue logo" src="./assets/logo.png" />
+    <HelloWorld msg="Welcome to Your Vue.js App" />
   </div>
 </template>
 <script setup lang="ts">
@@ -148,8 +155,8 @@ defineOptions({
 
 const addUseStrictResult = `<template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <img alt="Vue logo" src="./assets/logo.png" />
+    <HelloWorld msg="Welcome to Your Vue.js App" />
   </div>
 </template>
 <script>
@@ -177,8 +184,8 @@ export default {
 
 const addUseStrictResultWithSetup = `<template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <img alt="Vue logo" src="./assets/logo.png" />
+    <HelloWorld msg="Welcome to Your Vue.js App" />
   </div>
 </template>
 <script setup>
@@ -203,8 +210,8 @@ defineOptions({
 
 const addUseStrictResultWithLangTs = `<template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <img alt="Vue logo" src="./assets/logo.png" />
+    <HelloWorld msg="Welcome to Your Vue.js App" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -288,8 +295,8 @@ describe('run-transformation', () => {
     const source = `
       <template>
         <div id="app">
-          <img alt="Vue logo" src="./assets/logo.png">
-          <HelloWorld msg="Welcome to Your Vue.js App"/>
+          <img alt="Vue logo" src="./assets/logo.png" />
+          <HelloWorld msg="Welcome to Your Vue.js App" />
         </div>
       </template>
 
@@ -314,5 +321,15 @@ describe('run-transformation', () => {
     expect(result).toEqual(source)
   })
 
-  it.todo('(VueTransformation) transforms template blocks in .vue files')
+  it('(VueTransformation) transforms template blocks in .vue files', () => {
+    const file = { path: '/tmp/scriptLangTs.vue', source: vueSfcSource }
+    const result = runTransformation(file, {
+      template: altToAriaLabel,
+    })
+
+    const normalisedResult = result.replace(/\n */g, '')
+    const normalisedSource = vueSfcSource.replace(/\n */g, '')
+
+    expect(normalisedResult).toEqual(normalisedSource)
+  })
 })
