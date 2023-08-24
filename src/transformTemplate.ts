@@ -11,7 +11,6 @@ export default function transformTemplate(
   transformation: TemplateTransformation,
   descriptor: TransformationBlock,
   path: string,
-  // params: object,
 ): boolean {
   debug('Running template transform')
 
@@ -28,13 +27,7 @@ export default function transformTemplate(
     )
   }
 
-  const out = stringify(result.ast)
-  // TODO
-  // const out = transformation({ path, source: descriptor.content }, api, params)
-
-  if (transformation) {
-    debug('Not fully supported yet! Do not trust the output')
-  }
+  const out = stringify(transformation(result.ast))
 
   return processTransformResult(descriptor, out)
 }
