@@ -342,27 +342,20 @@ describe('template', () => {
       )
     })
 
+    // We don't use the html util all the time here because the AST
+    // contains trailing spaces for comment text nodes, and our Prettier
+    // instance would remove them from the test code if we used html.
+    // Those whitespaces are easier to fix post-transform with a formatter
+    // than inside the stringifier, so they're tolerated and unit tests
+    // are adjusted accordingly.
     describe('comments', () => {
       testEqual('HTML comment', html`<div>Foo<!-- Comment -->Bar</div>`)
       testEqual(
         'Consecutives lines of comments',
-        html`<div>
-          <!-- Comment -->
-          <!-- Comment -->
-          <!-- Comment -->
-          Foo
-        </div>`,
+        '<div>\n<!-- Comment -->\n<!-- Comment -->\nFoo \n</div>',
       )
-      testEqual(
-        'Single-line comment',
-        html`// Comment
-          <div>Hi</div>`,
-      )
-      testEqual(
-        'Multi-line comment',
-        html`/* Comment */
-          <div>Hi</div>`,
-      )
+      testEqual('Single-line comment', '// Comment \n<div>Hi</div>')
+      testEqual('Multi-line comment', '/* Comment */ \n<div>Hi</div>')
       testEqual('Multi-line in interpolation', html`<div>Hi {{ foo /* Comment */ }}</div>`)
       testEqual('Multi-line in dynamic prop', html`<div :foo="bar /* Comment */">Hi</div>`)
     })
