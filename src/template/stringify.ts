@@ -18,7 +18,13 @@ import type {
 import { NodeTypes } from '@vue/compiler-core'
 import { isVoidTag } from '@vue/shared'
 
-import { createAttribute, createDirective, isGenerated } from '~/template/api'
+import {
+  createAttribute,
+  createDirective,
+  findDirectives,
+  isGenerated,
+  removeAttribute,
+} from '~/template/api'
 import {
   clearCtx,
   isNotEmpty,
@@ -90,16 +96,24 @@ class TemplateStringifier {
     }
 
     if (isCompoundExpression(node)) {
-      debugTemplate('genExpression: Not implemented yet, currently printing the source code.')
+      debugTemplate(
+        'genExpression: CompoundExpressionNode is not well implemented yet, currently printing the source code.',
+      )
 
       // TODO: Identify JS expression type and exploit that
       // info in the stringifier to rebuild nodes manually.
       if (node.children) {
+        // Interpolations seem to imply that " + " strings will be injected
+        // in between values, so that the resulting string content for the
+        // whole expression is a string concatenation. But the same pattern
+        // can legitimate appear in nodes where we add two integers.
         const hasInterpolations = node.children.some(
           (child) => typeof child === 'object' && child.type === 5,
         )
 
-        return node.children
+        // Here we concatenate child node sources to obtain the likely
+        // content of the CompoundExpressionNode.
+        let likelyOutcome = node.children
           .map((c) => {
             if (typeof c === 'string') {
               return c
@@ -112,6 +126,42 @@ class TemplateStringifier {
           })
           .filter((child) => (hasInterpolations ? child !== ' + ' : true))
           .join('')
+
+        // Then we perform optimisations and sanitisations where
+        // unlikely to have side effects.
+
+        // For objects, we want to check if there's a chance we have the
+        // { foo: foo } pattern, in which case we want to rewrite it to
+        // { foo }.
+        if (likelyOutcome.includes('{') && likelyOutcome.includes('}')) {
+          // First remove string content to avoid matching things inside strings.
+          const buffer = likelyOutcome
+            .replace(/`[^`]*`/g, '')
+            .replace(/"[^"]*"/g, '')
+            .replace(/'[^']*'/g, '')
+
+          // Next find patterns that must be replaced and replace them.
+          const varPairings = buffer.match(/([^:{} ,]+) *: *([^:{} ,]+)/g)
+          if (varPairings) {
+            const changesToMake = varPairings
+              .map((str) => {
+                const pair = str.split(':').map((v) => v.trim())
+
+                return {
+                  str,
+                  pair,
+                }
+              })
+              .filter(({ pair }) => pair[0] === pair[1])
+              .map(({ pair, str }) => ({ replacement: pair[0], str }))
+
+            changesToMake.forEach(({ replacement, str }) => {
+              likelyOutcome = likelyOutcome.replace(str, replacement)
+            })
+          }
+        }
+
+        return likelyOutcome
       }
 
       return node.loc.source
@@ -282,6 +332,17 @@ class TemplateStringifier {
     if (prop.arg && isSimpleExpression(prop.arg)) {
       argName = prop.arg.isStatic ? `${prop.arg.content}` : `[${this.genExpression(prop.arg)}]`
     }
+    if (prop.arg && isCompoundExpression(prop.arg)) {
+      const argContent = this.genExpression(prop.arg)
+      if (
+        ["'", '"', '`'].some((delim) => argContent.startsWith(delim) && argContent.endsWith(delim))
+      ) {
+        argName = `[${argContent}]`
+      } else {
+        argName = argContent
+      }
+    }
+
     // If not using the shorthand, we must separate prefix and arg with semicolon.
     if (argName.length && lhs.length > 1) {
       lhs = `${lhs}:`
@@ -316,7 +377,7 @@ class TemplateStringifier {
       return ''
     }
 
-    return children.map((child) => this.genNode(child)).join('')
+    return `\n${children.map((child) => this.genNode(child)).join('\n')}\n`
   }
 
   genRoot(node: RootNode): string {
@@ -341,7 +402,7 @@ class TemplateStringifier {
   }
 
   genComment(node: CommentNode): string {
-    throw error('genComment: TODO, not implemented', node)
+    return `<!--${node.content}-->`
   }
 
   genNode(
@@ -395,6 +456,21 @@ class TemplateStringifier {
   genElement(node: BaseElementNode): string {
     const tag = this.genTag(node)
     const childNodes = this.genChildren(node.children)
+
+    if (tag === 'transition') {
+      const hasVShowDirectChild = node.children.some(
+        (child) =>
+          isElement(child) &&
+          findDirectives(child, {
+            name: 'v-show',
+          }),
+      )
+      if (hasVShowDirectChild) {
+        removeAttribute(node, {
+          name: 'persisted',
+        })
+      }
+    }
 
     const directives = [this.genVPre(node), this.genProps(node)].flat().filter(isNotEmpty)
 

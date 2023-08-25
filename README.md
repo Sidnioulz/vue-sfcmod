@@ -41,6 +41,10 @@ Elements using the [`v-text` directive](https://vuejs.org/api/built-in-directive
 
 Content inside [`v-html` directives](https://vuejs.org/api/built-in-directives.html#v-html) is printed as is and cannot be transformed.
 
+### Cannot preserve comments inside `transition`
+
+The built-in Vue [`transition` component](https://vuejs.org/guide/built-ins/transition.html) is returned by the Vue compiler without HTML comment children. Because the children are missing from the compiler AST, they cannot be recovered by vue-sfcmod. [Upstream issue](https://github.com/vuejs/core/issues/9047).
+
 ### String style attributes are converted to JSON
 
 When strings are passed to [`style` attributes](https://vuejs.org/guide/essentials/class-and-style.html#binding-inline-styles), it is converted to JSON (and deduplicated in the process). This is done by the Vue compiler, and attempting to undo that conversion could result in bugs in the template codemod engine.
