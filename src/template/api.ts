@@ -7,7 +7,9 @@ import type {
 } from '@vue/compiler-core'
 import { NodeTypes } from '@vue/compiler-core'
 
+import { isAttribute, isDirective, isText } from '~/template/utils'
 import { debugTemplate } from '~/utils/debug'
+import error from '~/utils/error'
 
 /* -- SHARED UTILS -- */
 const fakeSource = '_@_ generated from api, source is unavailable _@_'
@@ -84,4 +86,99 @@ export function createAttribute({
     value: value ? createText({ content: value }) : undefined,
     loc: genFakeLoc(),
   }
+}
+
+/* -- COMPARE FUNCTIONS -- */
+export function compareAttributeValues(a: AttributeNode['value'], b: AttributeNode['value']) {
+  if (!a && !b) {
+    return true
+  }
+  if (!a || !b) {
+    return false
+  }
+
+  const aContent = isText(a) ? a.content : a
+  const bContent = isText(b) ? b.content : b
+
+  return aContent === bContent
+}
+
+/* -- FIND FUNCTIONS -- */
+export function findAttributes(
+  node: BaseElementNode,
+  { name, value }: Partial<Omit<Omit<AttributeNode, 'loc'>, 'type'>>,
+): AttributeNode[] {
+  return node.props.filter((prop) => {
+    if (!isAttribute(prop)) {
+      return false
+    }
+
+    if (name !== undefined && prop.name === name) {
+      return true
+    }
+
+    if (value !== undefined && compareAttributeValues(prop.value, value)) {
+      return true
+    }
+
+    return false
+  }) as AttributeNode[]
+}
+
+export function findDirectives(
+  node: BaseElementNode,
+  { name, arg, exp, modifiers }: Partial<Omit<Omit<DirectiveNode, 'loc'>, 'type'>>,
+): DirectiveNode[] {
+  return node.props.filter((prop) => {
+    if (!isDirective(prop)) {
+      return false
+    }
+
+    if (name !== undefined && prop.name === name) {
+      return true
+    }
+
+    if (
+      modifiers !== undefined &&
+      modifiers.every((mod: string) => !prop.modifiers.includes(mod))
+    ) {
+      return true
+    }
+
+    if (arg !== undefined) {
+      throw error('findDirectives: TODO compareArgs', { arg, propArg: prop.arg })
+    }
+    if (exp !== undefined) {
+      throw error('findDirectives: TODO compareExps', { exp, propExp: prop.exp })
+    }
+
+    return false
+  }) as DirectiveNode[]
+}
+
+/* -- REMOVE FUNCTIONS -- */
+export function removeAttribute(
+  node: BaseElementNode,
+  options: Partial<Omit<Omit<AttributeNode, 'loc'>, 'type'>>,
+) {
+  const attributesToRemove = findAttributes(node, options)
+  const filteredProps = node.props.filter(
+    (prop) => !isAttribute(prop) || !attributesToRemove.includes(prop),
+  )
+
+  // eslint-disable-next-line no-param-reassign
+  node.props = filteredProps
+}
+
+export function removeDirective(
+  node: BaseElementNode,
+  options: Partial<Omit<Omit<DirectiveNode, 'loc'>, 'type'>>,
+) {
+  const directivesToRemove = findDirectives(node, options)
+  const filteredProps = node.props.filter(
+    (prop) => !isDirective(prop) || !directivesToRemove.includes(prop),
+  )
+
+  // eslint-disable-next-line no-param-reassign
+  node.props = filteredProps
 }
