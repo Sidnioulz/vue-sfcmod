@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import * as fs from 'fs'
-import Module from 'module'
 import * as path from 'path'
 
 import createDebug from 'debug'
@@ -36,20 +35,15 @@ const {
 function loadTransformationModule(nameOrPath: string) {
   const customModulePath = path.resolve(process.cwd(), nameOrPath)
   if (fs.existsSync(customModulePath)) {
-    const requireFunc = Module.createRequire(path.resolve(process.cwd(), './package.json'))
-
-    // TODO: interop with ES module
-    // TODO: fix absolute path
-    return requireFunc(`./${nameOrPath}`)
+    return import(`${process.env.PWD}/${nameOrPath}`)
   }
 
   throw new Error(`Cannot find transformation module ${nameOrPath}`)
 }
 
-// TODO: port the `Runner` interface of jscodeshift
 async function main() {
   const resolvedPaths = globbySync(files as string[])
-  const transformationModule = loadTransformationModule(transformationName)
+  const transformationModule = await loadTransformationModule(transformationName)
 
   log(`Processing ${resolvedPaths.length} files…`)
 
