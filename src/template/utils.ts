@@ -9,10 +9,13 @@ import type {
   IfNode,
   InterpolationNode,
   Node,
+  ObjectExpression,
+  Property,
   SimpleExpressionNode,
   RootNode,
   TextCallNode,
   TextNode,
+  VNodeCall,
 } from '@vue/compiler-core'
 import { NodeTypes } from '@vue/compiler-core'
 
@@ -58,6 +61,12 @@ export function isIfBranch(prop: Node): prop is IfBranchNode {
 export function isInterpolation(node: Node): node is InterpolationNode {
   return node.type === NodeTypes.INTERPOLATION
 }
+export function isJsProperty(node: Node): node is Property {
+  return node.type === NodeTypes.JS_PROPERTY
+}
+export function isObjectExpression(node: Node): node is ObjectExpression {
+  return node.type === NodeTypes.JS_OBJECT_EXPRESSION
+}
 export function isRoot(node: Node): node is RootNode {
   return node.type === NodeTypes.ROOT
 }
@@ -69,4 +78,7 @@ export function isText(node: Node): node is TextNode {
 }
 export function isTextCall(node: Node): node is TextCallNode {
   return node.type === NodeTypes.TEXT_CALL
+}
+export function isVNodeCall(node: Node): node is VNodeCall {
+  return node.type === NodeTypes.VNODE_CALL
 }

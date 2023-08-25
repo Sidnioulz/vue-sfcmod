@@ -9,6 +9,7 @@ import type {
   IfBranchNode,
   IfNode,
   InterpolationNode,
+  ObjectExpression,
   RootNode,
   SimpleExpressionNode,
   TemplateChildNode,
@@ -36,10 +37,12 @@ import {
   isFor,
   isIf,
   isInterpolation,
+  isObjectExpression,
   isRoot,
   isSimpleExpression,
   isText,
   isTextCall,
+  isVNodeCall,
 } from '~/template/utils'
 import { debugTemplate } from '~/utils/debug'
 import error from '~/utils/error'
@@ -174,13 +177,17 @@ class TemplateStringifier {
     return `{{ ${this.genExpression(node.content)} }}`
   }
 
+  genAttribute(prop: AttributeNode): string {
+    return prop.value !== undefined ? `${prop.name}="${this.genText(prop.value)}"` : prop.name
+  }
+
   genProps(node: BaseElementNode): string[] {
     const { props = [] } = node
 
     return props
       .map((prop) => {
         if (isAttribute(prop)) {
-          return prop.value !== undefined ? `${prop.name}="${this.genText(prop.value)}"` : prop.name
+          return this.genAttribute(prop)
         }
 
         if (isDirective(prop)) {
@@ -233,7 +240,30 @@ class TemplateStringifier {
             throw error('genIf: found branch without children', branch)
           }
 
+          const newIfDirective = createDirective({
+            name: operation,
+            arg: undefined,
+            exp: branch.condition,
+            modifiers: [],
+          })
+
           const firstChild = branch.children[0]
+          if (branch.isTemplateIf) {
+            const extraProps: string[] = [this.genDirective(newIfDirective)]
+
+            if (branch.userKey) {
+              extraProps.push(
+                isAttribute(branch.userKey)
+                  ? this.genAttribute(branch.userKey)
+                  : this.genDirective(branch.userKey),
+              )
+            }
+
+            return `<template ${extraProps.join(' ')}>${this.genChildren(
+              branch.children,
+            )}</template>`
+          }
+
           if (!isElement(firstChild)) {
             throw error(
               `genIf: attempting to render a branch child that's not yet supported (type ${firstChild.type})`,
@@ -241,12 +271,6 @@ class TemplateStringifier {
             )
           }
 
-          const newIfDirective = createDirective({
-            name: operation,
-            arg: undefined,
-            exp: branch.condition,
-            modifiers: [],
-          })
           this.insertProp(firstChild, operation, newIfDirective)
 
           return this.genChildren(branch.children)
@@ -258,19 +282,24 @@ class TemplateStringifier {
       .join('\n')
   }
 
+  genObjectExpressionProperties(props: ObjectExpression): string[] {
+    const extraProps: string[] = []
+
+    props.properties.forEach((prop) => {
+      if (isSimpleExpression(prop.value) || isCompoundExpression(prop.value)) {
+        extraProps.push(`:${this.genExpression(prop.key)}="${this.genExpression(prop.value)}"`)
+      } else {
+        throw error(
+          `genObjectExpressionProperties: prop value type ${prop.value.type} is not supported yet`,
+          prop,
+        )
+      }
+    })
+
+    return extraProps
+  }
+
   genFor(node: ForNode): string {
-    if (node.children.length !== 1) {
-      throw error(`genFor: unexpected children length ${node.children.length}, should be 1`, node)
-    }
-
-    const firstChild = node.children[0]
-    if (!isElement(firstChild)) {
-      throw error(
-        `genFor: attempting to render a child that's not yet supported (type ${firstChild.type})`,
-        node,
-      )
-    }
-
     const { parseResult } = node
     // We generate expressions for all components.
     const source = this.genExpression(parseResult.source)
@@ -283,6 +312,24 @@ class TemplateStringifier {
       definedExpressions.length > 1 ? `(${definedExpressions.join(', ')})` : definedExpressions[0]
 
     const newForDirective = createAttribute({ name: 'v-for', value: `${attrLHS} in ${source}` })
+
+    const firstChild = node.children[0]
+
+    // NOTE: This won't work with ForNodes created manually.
+    const isTemplateVFor =
+      firstChild === undefined || !firstChild.loc.source.includes('v-for') || !isElement(firstChild)
+
+    if (isTemplateVFor) {
+      const extraProps: string[] = [this.genAttribute(newForDirective)]
+
+      const returns = node.codegenNode?.children.arguments[1].returns
+      if (returns && isVNodeCall(returns) && returns.props && isObjectExpression(returns.props)) {
+        extraProps.push(...this.genObjectExpressionProperties(returns.props))
+      }
+
+      return `<template ${extraProps.join(' ')}>${this.genChildren(node.children)}</template>`
+    }
+
     this.insertProp(firstChild, 'for', newForDirective)
 
     return this.genChildren(node.children)

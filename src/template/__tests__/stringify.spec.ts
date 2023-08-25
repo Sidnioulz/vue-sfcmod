@@ -186,14 +186,12 @@ describe('template', () => {
       testEqual(
         'dynamic slot name with template literal',
         // eslint-disable-next-line no-template-curly-in-string
-        html`<MyComponent><template #[\`\${step.key}-date\`]></template></MyComponent>`,
+        '<MyComponent><template #[`${step.key}-date`]></template></MyComponent>',
       )
       testEqual(
         'dynamic slot name with template literal and v-for',
         // eslint-disable-next-line no-template-curly-in-string
-        html`<MyComponent v-bind="props"
-          ><template v-for="step in steps" :key="step.key" #[\`\${step.key}-date\`]></template
-        ></MyComponent>`,
+        '<MyComponent v-bind="props"><template v-for="step in steps" :key="step.key" #[`${step.key}-date`]></template></MyComponent>',
       )
     })
 
@@ -255,6 +253,42 @@ describe('template', () => {
         'v-for with key and interpolation',
         html`<li v-for="item in items" :key="item.id">{{ item.name }}</li>`,
       )
+      testEqual(
+        'template v-for',
+        html`<template v-for="(item, index) in previewItems">{{ item }}</template>`,
+      )
+      testEqual(
+        'template v-for with extra attrs',
+        html`<MyComp
+          ><template #preview v-for="(item, index) in previewItems">{{ item }}</template></MyComp
+        >`,
+      )
+      testEqual(
+        'template v-for with key',
+        html`<MyComp
+          ><template v-for="(item, index) in previewItems" :key="item.id"
+            >{{ item }}</template
+          ></MyComp
+        >`,
+      )
+      testEqual(
+        'v-if inside template v-for',
+        html`<template v-for="(item, index) in previewItems"><div v-if="foo">Foo</div></template>`,
+      )
+      testEqual(
+        'v-for in v-for',
+        html`<li v-for="(value, key) in items">
+          <span v-for="dataEndpoint in value">{{ dataEndpoint }} ,</span>
+        </li>`,
+      )
+      testEqual(
+        'v-for in template v-for',
+        html`<MyComp
+          ><template v-for="item in previewItems"
+            ><span v-for="dataEndpoint in item">{{ dataEndpoint }} ,</span></template
+          ></MyComp
+        >`,
+      )
     })
 
     describe('v-if', () => {
@@ -286,6 +320,28 @@ describe('template', () => {
         'v-else',
         html`<div v-if="showA">A</div>
           <div v-else>B</div>`,
+      )
+
+      testEqual('template v-if', html`<template v-if="hasItem">{{ item }}</template>`)
+      testEqual(
+        'template v-if with extra attrs',
+        html`<MyComp><template #preview v-if="hasItem">{{ item }}</template></MyComp>`,
+      )
+      testEqual(
+        'template v-if with key',
+        html`<MyComp><template v-if="hasItem" :key="item.id">{{ item }}</template></MyComp>`,
+      )
+      testEqual(
+        'v-if in v-if',
+        html`<li v-if="hasItem"><span v-if="dataEndpoint">{{ dataEndpoint }}</span></li>`,
+      )
+      testEqual(
+        'v-if in template v-if',
+        html`<MyComp
+          ><template v-if="hasItem"
+            ><span v-if="dataEndpoint">{{ dataEndpoint }}</span></template
+          ></MyComp
+        >`,
       )
     })
 
