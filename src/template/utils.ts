@@ -67,6 +67,17 @@ export function isJsProperty(node: Node): node is Property {
 export function isObjectExpression(node: Node): node is ObjectExpression {
   return node.type === NodeTypes.JS_OBJECT_EXPRESSION
 }
+export function isNode(node: unknown): node is Node {
+  return (
+    typeof node === 'object' &&
+    !!node &&
+    // Typescript in all its splendor. Object.hasOwn is unsupported.
+    'type' in node &&
+    typeof node.type === 'number' &&
+    node.type >= 0 &&
+    node.type <= 26
+  )
+}
 export function isRoot(node: Node): node is RootNode {
   return node.type === NodeTypes.ROOT
 }
