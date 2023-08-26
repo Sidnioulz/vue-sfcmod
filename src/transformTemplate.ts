@@ -1,6 +1,7 @@
 import { compileTemplate } from '@vue/compiler-sfc'
 
 import processTransformResult from '~/processTransformResult'
+import * as TemplateAPI from '~/template/api'
 import { stringify } from '~/template/stringify'
 import type { TemplateTransformation } from '~/types/TemplateTransformation'
 import type { TransformationBlock } from '~/types/TransformationBlock'
@@ -27,7 +28,7 @@ export default function transformTemplate(
     )
   }
 
-  const out = stringify(transformation(result.ast))
+  const out = stringify(transformation(result.ast, TemplateAPI))
 
   return processTransformResult(descriptor, out)
 }

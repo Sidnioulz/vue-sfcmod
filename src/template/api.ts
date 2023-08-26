@@ -2,12 +2,14 @@ import type {
   AttributeNode,
   BaseElementNode,
   DirectiveNode,
+  Node,
+  RootNode,
   SourceLocation,
   TextNode,
 } from '@vue/compiler-core'
 import { NodeTypes } from '@vue/compiler-core'
 
-import { isAttribute, isDirective, isText } from '~/template/utils'
+import { isAttribute, isDirective, isNode, isText } from '~/template/utils'
 import { debugTemplate } from '~/utils/debug'
 import error from '~/utils/error'
 
@@ -103,6 +105,41 @@ export function compareAttributeValues(a: AttributeNode['value'], b: AttributeNo
   return aContent === bContent
 }
 
+/* -- AST EXPLORATION FUNCTIONS -- */
+export function exploreAst(ast: RootNode, matcher: (node: Node) => boolean): Node[] {
+  const nodeset = new Set<Node>()
+  const queue: Node[] = [ast]
+
+  while (queue.length) {
+    const currentNode = queue.pop()
+    if (currentNode) {
+      if (matcher(currentNode)) {
+        nodeset.add(currentNode)
+      }
+
+      if (typeof currentNode !== 'string') {
+        const nextNodes: unknown[] = Object.values(currentNode)
+          .filter(Boolean)
+          .reduce((acc, current) => {
+            if (Array.isArray(current)) {
+              return [...acc, ...current]
+            }
+
+            return [...acc, current]
+          }, [])
+
+        queue.push(...nextNodes.filter(isNode))
+      }
+    }
+  }
+
+  return Array.from(nodeset)
+}
+
+export function findAstAttributes(ast: RootNode, matcher?: (node: Node) => boolean) {
+  return exploreAst(ast, (node) => isAttribute(node) && (matcher?.(node) ?? true))
+}
+
 /* -- FIND FUNCTIONS -- */
 export function findAttributes(
   node: BaseElementNode,
@@ -154,6 +191,45 @@ export function findDirectives(
 
     return false
   }) as DirectiveNode[]
+}
+
+/* -- UPDATE FUNCTIONS -- */
+export function updateAttribute(
+  prop: AttributeNode,
+  updater: (attr: AttributeNode) => Partial<Omit<Omit<AttributeNode, 'loc'>, 'type'>>,
+) {
+  /* eslint-disable no-param-reassign */
+  const changes = updater(prop)
+
+  if (Object.hasOwn(changes, 'name')) {
+    if (!changes.name) {
+      throw error('updateAttribute: Invalid changes to attribute name', { prop, changes })
+    }
+    prop.name = changes.name
+  }
+
+  if (Object.hasOwn(changes, 'value')) {
+    if (
+      changes.value !== undefined &&
+      typeof changes.value !== 'string' &&
+      !isText(changes.value)
+    ) {
+      throw error('updateAttribute: Invalid changes to attribute value', { prop, changes })
+    }
+
+    if (changes.value === undefined) {
+      prop.value = undefined
+    } else if (isText(changes.value)) {
+      prop.value = changes.value
+    } else {
+      prop.value = createText({ content: changes.value })
+    }
+  }
+
+  prop.loc = genFakeLoc()
+
+  /* eslint-enable no-param-reassign */
+  return null
 }
 
 /* -- REMOVE FUNCTIONS -- */
