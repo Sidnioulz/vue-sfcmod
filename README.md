@@ -59,8 +59,8 @@ When strings are passed to [`style` attributes](https://vuejs.org/guide/essentia
 
 ### Template
 
-- [ ] Support `<template>` [#15](https://github.com/Sidnioulz/vue-sfcmod/issues/15)
-- [ ] Add an API to search for, edit, remove and inject nodes in template ASTs
+- [x] Support `<template>` [#15](https://github.com/Sidnioulz/vue-sfcmod/issues/15)
+- [ ] _ongoing_ - Add an API to search for, edit, remove and inject nodes in template ASTs
 - [ ] Allow interpreting and modding JS expressions inside `<template>`
 
 ### Style
