@@ -11,6 +11,18 @@ export default {
   },
   testEnvironment: 'node',
   testPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/'],
+  collectCoverageFrom: [
+    'index.ts',
+    '**/bin/vue-sfcmod.ts',
+    '**/src/**/*.ts',
+    '!**/dist/**',
+    '!**/node_modules/**',
+    '!**/__fixtures__/**',
+    '!**/__tests__/**',
+  ],
+  coverageDirectory: '<rootDir>/coverage/',
+  coverageProvider: 'v8',
+  coverageReporters: ['lcov', 'text'],
   moduleNameMapper: {
     '^~/(.*)': '<rootDir>/src/$1.ts',
   },
