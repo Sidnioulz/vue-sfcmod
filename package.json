@@ -24,7 +24,7 @@
     "precli": "[[ -d dist/bin/ ]] || yarn build",
     "cli": "node dist/bin/vue-sfcmod.js",
     "example": "./examples/run.sh",
-    "example:clear": "git checkout examples/*/Input.vue",
+    "example:clear": "git checkout examples/*/Input.*",
     "format": "yarn prettier --check .",
     "format:staged": "yarn prettier --write",
     "format:fix": "yarn prettier --write .",

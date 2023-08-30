@@ -6,27 +6,24 @@
 // so we apply transforms in a specific order.
 // ------------------------------------------------------------- //
 
-// const classMap = [
-//   ['6', 24],
-//   ['5', 20],
-//   ['4', 16],
-//   ['3', 12],
-//   ['2', 8],
-//   ['1', 4],
-//   ['[2.5rem]', 40],
-// ]
+const transformClass = require('../rename-class-in-setup/transformClass.cjs')
 
-// function escapeRegex(klass) {
-//   return klass.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&')
-// }
+function transformer(ast, api) {
+  const classAttributes = api.findAstAttributes(ast, ({ name }) => name === 'class')
 
-// function preserveClass(klass) {
-//   return [/^flex/, /^border/].some((kw) => klass.match(kw))
-// }
+  classAttributes.forEach((attr) =>
+    api.updateAttribute(attr, ({ value }) => {
+      if (!value) {
+        return {}
+      }
 
-function transformer(file) {
-  // TODO
-  return file.source
+      return {
+        value: transformClass(value.content),
+      }
+    }),
+  )
+
+  return ast
 }
 
 module.exports = {

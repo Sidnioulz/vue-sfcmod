@@ -24,7 +24,7 @@ fi
 # Examples are used
 if [ "$#" -eq 1 ] && [ -d "examples/$1" ]; then
   isExample=true
-  inputPaths="examples/$1/Input.vue"
+  inputPaths="examples/$1/Input.*"
 
 # Paths to source files are used
 else

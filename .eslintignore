@@ -18,5 +18,7 @@ coverage
 
 dist
 
+examples/*/Input.*
+
 # Handled separately
 playground
