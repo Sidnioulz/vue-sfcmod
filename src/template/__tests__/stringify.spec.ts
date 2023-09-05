@@ -362,12 +362,12 @@ describe('template', () => {
 
       testEqual('v-once', html`<div v-once>Message</div>`)
 
-      testEqual('v-text with empty content', html`<div v-text="Actual message"></div>`)
-      testEqual('v-text on unary element', html`<div v-text="Actual message" />`)
+      testEqual('v-text with empty content', html`<div v-text="actualMessage"></div>`)
+      testEqual('v-text on unary element', html`<div v-text="actualMessage" />`)
       testUnequal(
         'v-text with content loses its content',
-        html`<div v-text="Actual message">Lost message</div>`,
-        html`<div v-text="Actual message"></div>`,
+        html`<div v-text="actualMessage">Lost message</div>`,
+        html`<div v-text="actualMessage"></div>`,
       )
 
       testEqual('v-html', html`<div v-html="rawHtml"></div>`)
