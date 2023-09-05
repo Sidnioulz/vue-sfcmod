@@ -17,6 +17,7 @@
     "jsx": "preserve",
     "lib": ["ES2022", "DOM"],
     "types": ["jest", "jscodeshift", "node"],
+    "typeRoots": ["node_modules/@types", "src/shims"],
     "rootDir": ".",
     "paths": {
       "~/*": ["./src/*.ts"]
