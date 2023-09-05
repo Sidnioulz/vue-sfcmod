@@ -1,7 +1,6 @@
-import { compileTemplate } from '@vue/compiler-sfc'
-
 import processTransformResult from '~/processTransformResult'
 import * as TemplateAPI from '~/template/api'
+import { compileTemplate } from '~/template/compile'
 import { stringify } from '~/template/stringify'
 import type { TemplateTransformation } from '~/types/TemplateTransformation'
 import type { TransformationBlock } from '~/types/TransformationBlock'
@@ -20,7 +19,6 @@ export default function transformTemplate(
   const result = compileTemplate({
     source: descriptor.content,
     filename: path,
-    id: 'fake-id',
   })
 
   if (result.errors.length) {
