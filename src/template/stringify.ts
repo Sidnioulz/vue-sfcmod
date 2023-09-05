@@ -19,15 +19,10 @@ import type {
 import { NodeTypes } from '@vue/compiler-core'
 import { isVoidTag } from '@vue/shared'
 
-import {
-  createAttribute,
-  createDirective,
-  findDirectives,
-  isGenerated,
-  removeAttribute,
-} from '~/template/api'
+import { createDirective, findDirectives, removeAttribute } from '~/template/api'
 import {
   clearCtx,
+  genFakeLoc,
   isNotEmpty,
   isAttribute,
   isComment,
@@ -35,6 +30,7 @@ import {
   isDirective,
   isElement,
   isFor,
+  isGenerated,
   isIf,
   isInterpolation,
   isObjectExpression,
@@ -46,6 +42,17 @@ import {
 } from '~/template/utils'
 import { debugTemplate } from '~/utils/debug'
 import error from '~/utils/error'
+
+type StringifiableNode =
+  | BaseElementNode
+  | CommentNode
+  | CompoundExpressionNode
+  | IfBranchNode
+  | IfNode
+  | InterpolationNode
+  | ForNode
+  | TextCallNode
+  | TextNode
 
 class TemplateStringifier {
   private readonly ast: RootNode
@@ -206,7 +213,7 @@ class TemplateStringifier {
   insertProp(
     node: BaseElementNode,
     operation: string,
-    directive: AttributeNode | DirectiveNode,
+    propToInsert: AttributeNode | DirectiveNode,
   ): void {
     if (!isGenerated(node)) {
       // Sort props in the source code so we know where to place v-if / v-else to minimise disturbance.
@@ -219,9 +226,9 @@ class TemplateStringifier {
         .sort((a, b) => a.pos - b.pos)
         .map(({ arg }) => arg)
 
-      node.props.splice(propPositions.indexOf(`v-${operation}`), 0, directive)
+      node.props.splice(propPositions.indexOf(`v-${operation}`), 0, propToInsert)
     } else {
-      node.props.push(directive)
+      node.props.push(propToInsert)
     }
   }
 
@@ -300,39 +307,44 @@ class TemplateStringifier {
   }
 
   genFor(node: ForNode): string {
-    const { parseResult } = node
-    // We generate expressions for all components.
-    const source = this.genExpression(parseResult.source)
-    const value = parseResult.value ? this.genExpression(parseResult.value) : undefined
-    const key = parseResult.key ? this.genExpression(parseResult.key) : undefined
-    const index = parseResult.index ? this.genExpression(parseResult.index) : undefined
-    const definedExpressions = [value, key, index].filter(Boolean)
+    if (!node.sfcmodMeta?.forNode) {
+      throw error('genFor: Missing sfcmod metadata', node)
+    }
+    const template = node.sfcmodMeta.forNode.element
 
-    const attrLHS =
-      definedExpressions.length > 1 ? `(${definedExpressions.join(', ')})` : definedExpressions[0]
-
-    const newForDirective = createAttribute({ name: 'v-for', value: `${attrLHS} in ${source}` })
-
-    const firstChild = node.children[0]
-
-    // NOTE: This won't work with ForNodes created manually.
-    const isTemplateVFor =
-      firstChild === undefined || !firstChild.loc.source.includes('v-for') || !isElement(firstChild)
-
-    if (isTemplateVFor) {
-      const extraProps: string[] = [this.genAttribute(newForDirective)]
-
-      const returns = node.codegenNode?.children.arguments[1].returns
+    if (node.sfcmodMeta.forNode.isTemplateFor) {
+      const props: Array<AttributeNode | DirectiveNode> = []
+      const returns = node.codegenNode?.children.arguments[1]?.returns
       if (returns && isVNodeCall(returns) && returns.props && isObjectExpression(returns.props)) {
-        extraProps.push(...this.genObjectExpressionProperties(returns.props))
+        returns.props.properties.forEach((prop) => {
+          if (isSimpleExpression(prop.value) || isCompoundExpression(prop.value)) {
+            props.push(
+              createDirective({
+                name: 'bind',
+                arg: prop.key,
+                exp: prop.value,
+                shorthand: true,
+              }),
+            )
+          } else {
+            throw error(`genFor: prop value type ${prop.value.type} is not supported yet`, node)
+          }
+        })
       }
-
-      return `<template ${extraProps.join(' ')}>${this.genChildren(node.children)}</template>`
+      // This odd manipulation is done because the codegenNode loc contains more clues
+      // as to the position of each prop. It can fail gracefully as the only consequence
+      // would be the for directive to not be ordered correctly.
+      const vForProp = template.props[0]
+      const copyNode: BaseElementNode = {
+        ...template,
+        loc: node.codegenNode?.loc || template.loc,
+        props,
+      }
+      this.insertProp(copyNode, 'for', vForProp)
+      template.props = copyNode.props
     }
 
-    this.insertProp(firstChild, 'for', newForDirective)
-
-    return this.genChildren(node.children)
+    return this.genElement(template)
   }
 
   /* -- DIRECTIVES -- */
@@ -354,22 +366,47 @@ class TemplateStringifier {
 
     const full = `v-${prop.name}`
 
-    return `${prop.loc.source.includes(full) ? full : shorthand}`
+    if (isGenerated(prop)) {
+      return prop.sfcmodMeta?.shorthand ? shorthand : full
+    }
+
+    return prop.loc.source.includes(full) ? full : shorthand
   }
 
   genDirective(prop: DirectiveNode): string {
-    // exp-less and arg-less directives
-    if (['cloak', 'else', 'once'].includes(prop.name)) {
+    // exp-less and arg-less directives, including `pre` only for generated nodes.
+    if (['cloak', 'else', 'once', 'pre'].includes(prop.name)) {
       return `v-${prop.name}`
     }
 
     // arg-less directives
-    if (['else', 'else-if', 'html', 'if', 'memo', 'show', 'text'].includes(prop.name)) {
+    if (['else-if', 'html', 'if', 'memo', 'show', 'text'].includes(prop.name)) {
       if (prop.exp === undefined) {
         throw error(`genDirective: ${prop.name} directive has no exp`, prop)
       }
 
       return `v-${prop.name}="${this.genExpression(prop.exp)}"`
+    }
+
+    if (prop.name === 'for') {
+      const meta = prop?.sfcmodMeta?.forDirective ?? prop.forParseResult
+      if (!meta) {
+        throw error(
+          "genDirective: 'for' directive must have a sfcmodMeta.forDirective object or a well-defined parseResult",
+          prop,
+        )
+      }
+
+      const source = this.genExpression(meta.source)
+      const value = meta.value ? this.genExpression(meta.value) : undefined
+      const key = meta.key ? this.genExpression(meta.key) : undefined
+      const index = meta.index ? this.genExpression(meta.index) : undefined
+      const definedExpressions = [value, key, index].filter(Boolean)
+
+      const attrLHS =
+        definedExpressions.length > 1 ? `(${definedExpressions.join(', ')})` : definedExpressions[0]
+
+      return `v-for="${attrLHS} in ${source}"`
     }
 
     // Generic handling of directives with optional arg, exp, modifiers, shorthand.
@@ -452,18 +489,7 @@ class TemplateStringifier {
     return `<!--${node.content}-->`
   }
 
-  genNode(
-    node:
-      | BaseElementNode
-      | CommentNode
-      | CompoundExpressionNode
-      | IfBranchNode
-      | IfNode
-      | InterpolationNode
-      | ForNode
-      | TextCallNode
-      | TextNode,
-  ): string {
+  genNode(node: StringifiableNode): string {
     if (typeof node === 'string') {
       return node
     }
@@ -535,4 +561,37 @@ class TemplateStringifier {
 
 export function stringify(ast: RootNode) {
   return new TemplateStringifier(ast).stringify()
+}
+
+let stringifyNodeInstance: TemplateStringifier
+function initNodeInstance() {
+  if (!stringifyNodeInstance) {
+    stringifyNodeInstance = new TemplateStringifier({
+      type: NodeTypes.ROOT,
+      children: [],
+      helpers: new Set(),
+      components: [],
+      directives: [],
+      hoists: [],
+      imports: [],
+      cached: 0,
+      temps: 0,
+      loc: genFakeLoc(),
+    })
+  }
+}
+
+export function stringifyNode(node: StringifiableNode) {
+  initNodeInstance()
+
+  return stringifyNodeInstance.genNode(node)
+}
+
+export function _insertProp(
+  node: BaseElementNode,
+  operation: string,
+  prop: AttributeNode | DirectiveNode,
+) {
+  initNodeInstance()
+  stringifyNodeInstance.insertProp(node, operation, prop)
 }
