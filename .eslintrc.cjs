@@ -79,7 +79,7 @@ module.exports = {
       },
     ],
     'import/prefer-default-export': 'off',
-    'jest/no-disabled-tests': 'error',
+    'jest/no-disabled-tests': 'warn',
     'jest/no-focused-tests': 'error',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'error',

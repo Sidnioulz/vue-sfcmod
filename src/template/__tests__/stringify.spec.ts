@@ -1,14 +1,15 @@
-import { compileTemplate } from '@vue/compiler-sfc'
+import { NodeTypes, PlainElementNode } from '@vue/compiler-core'
 
 import SampleOne from '../../__fixtures__/One'
 import { html } from '../../utils/html'
-import { stringify } from '../stringify'
+import { compileTemplate } from '../compile'
+import { stringify, stringifyNode } from '../stringify'
+import { genFakeLoc } from '../utils'
 
 function prepare(source: string) {
   return compileTemplate({
     source,
     filename: 'unit-test.vue',
-    id: 'fake-id',
   })
 }
 
@@ -447,5 +448,34 @@ describe('template', () => {
 
   describe('stringify with script info', () => {
     testWholeSfc('img src turned into import', SampleOne)
+  })
+
+  describe('stringifyNode', () => {
+    it('stringifies standalone nodes', () => {
+      const node: PlainElementNode = {
+        type: NodeTypes.ELEMENT,
+        tag: 'input',
+        tagType: 0,
+        ns: 0,
+        codegenNode: undefined,
+        isSelfClosing: true,
+        loc: genFakeLoc(),
+        props: [
+          {
+            type: NodeTypes.ATTRIBUTE,
+            name: 'type',
+            loc: genFakeLoc(),
+            value: {
+              type: NodeTypes.TEXT,
+              content: 'number',
+              loc: genFakeLoc(),
+            },
+          },
+        ],
+        children: [],
+      }
+
+      expect(stringifyNode(node)).toEqual('<input type="number" />')
+    })
   })
 })
