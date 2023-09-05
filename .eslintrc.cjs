@@ -49,6 +49,7 @@ module.exports = {
     ],
     'prefer-destructuring': 'error',
     'import/extensions': 'off',
+    'no-underscore-dangle': 'off',
     'import/newline-after-import': ['error', { count: 1 }],
     'no-restricted-syntax': ['error', 'ForInStatement', 'LabeledStatement', 'WithStatement'],
     'import/no-extraneous-dependencies': [
