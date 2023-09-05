@@ -23,6 +23,10 @@ export default function transformTemplate(
     id: 'fake-id',
   })
 
+  if (result.errors.length) {
+    debug(result.errors)
+  }
+
   if (!result.ast) {
     throw error(
       "transformTemplate: template could not be compiled. Are you sure it's valid Vue syntax?",
