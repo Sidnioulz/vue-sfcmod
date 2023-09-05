@@ -30,7 +30,11 @@ export default function transformTemplate(
     )
   }
 
-  const out = stringify(transformation(result.ast, TemplateAPI, params))
+  const filteredAPI = { ...TemplateAPI }
+  for (const key of Object.keys(filteredAPI).filter((k) => k.startsWith('_'))) {
+    delete filteredAPI[key as keyof typeof filteredAPI]
+  }
+  const out = stringify(transformation(result.ast, filteredAPI, params))
 
   return processTransformResult(descriptor, out)
 }
