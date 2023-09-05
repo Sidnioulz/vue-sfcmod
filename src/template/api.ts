@@ -63,7 +63,7 @@ export function createDirective({
   }
 }
 
-export function createText({ content }: Omit<Omit<TextNode, 'loc'>, 'type'>): TextNode {
+export function createText({ content }: Omit<TextNode, 'loc' | 'type'>): TextNode {
   debugTemplate('api: Creating Text', content)
 
   return {
@@ -144,7 +144,7 @@ export function findAstAttributes(ast: RootNode, matcher?: (node: Node) => boole
 /* -- FIND FUNCTIONS -- */
 export function findAttributes(
   node: BaseElementNode,
-  { name, value }: Partial<Omit<Omit<AttributeNode, 'loc'>, 'type'>>,
+  { name, value }: Partial<Omit<AttributeNode, 'loc' | 'type'>>,
 ): AttributeNode[] {
   return node.props.filter((prop) => {
     if (!isAttribute(prop)) {
@@ -165,7 +165,7 @@ export function findAttributes(
 
 export function findDirectives(
   node: BaseElementNode,
-  { name, arg, exp, modifiers }: Partial<Omit<Omit<DirectiveNode, 'loc'>, 'type'>>,
+  { name, arg, exp, modifiers }: Partial<Omit<DirectiveNode, 'loc' | 'type'>>,
 ): DirectiveNode[] {
   return node.props.filter((prop) => {
     if (!isDirective(prop)) {
@@ -197,7 +197,7 @@ export function findDirectives(
 /* -- UPDATE FUNCTIONS -- */
 export function updateAttribute(
   prop: AttributeNode,
-  updater: (attr: AttributeNode) => Partial<Omit<Omit<AttributeNode, 'loc'>, 'type'>>,
+  updater: (attr: AttributeNode) => Partial<Omit<AttributeNode, 'loc' | 'type'>>,
 ) {
   /* eslint-disable no-param-reassign */
   const changes = updater(prop)
@@ -236,7 +236,7 @@ export function updateAttribute(
 /* -- REMOVE FUNCTIONS -- */
 export function removeAttribute(
   node: BaseElementNode,
-  options: Partial<Omit<Omit<AttributeNode, 'loc'>, 'type'>>,
+  options: Partial<Omit<AttributeNode, 'loc' | 'type'>>,
 ) {
   const attributesToRemove = findAttributes(node, options)
   const filteredProps = node.props.filter(
@@ -249,7 +249,7 @@ export function removeAttribute(
 
 export function removeDirective(
   node: BaseElementNode,
-  options: Partial<Omit<Omit<DirectiveNode, 'loc'>, 'type'>>,
+  options: Partial<Omit<DirectiveNode, 'loc' | 'type'>>,
 ) {
   const directivesToRemove = findDirectives(node, options)
   const filteredProps = node.props.filter(
