@@ -77,6 +77,7 @@ export default [
         'vue/prefer-import-from-vue': 'off',
         'line-comment-position': 'error',
         'newline-before-return': 'error',
+        'no-underscore-dangle': 'off',
         'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
         'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
         'no-param-reassign': [
