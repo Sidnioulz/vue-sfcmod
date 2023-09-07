@@ -5,6 +5,7 @@ import * as TemplateAPI from '~/template/api'
 import { stringify } from '~/template/stringify'
 import type { TemplateTransformation } from '~/types/TemplateTransformation'
 import type { TransformationBlock } from '~/types/TransformationBlock'
+import type { Options } from '~/types/TransformationOptions'
 import debug from '~/utils/debug'
 import error from '~/utils/error'
 
@@ -12,6 +13,7 @@ export default function transformTemplate(
   transformation: TemplateTransformation,
   descriptor: TransformationBlock,
   path: string,
+  params: Options,
 ): boolean {
   debug('Running template transform')
 
@@ -28,7 +30,7 @@ export default function transformTemplate(
     )
   }
 
-  const out = stringify(transformation(result.ast, TemplateAPI))
+  const out = stringify(transformation(result.ast, TemplateAPI, params))
 
   return processTransformResult(descriptor, out)
 }

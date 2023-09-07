@@ -21,15 +21,16 @@ yarn add -D vue-sfcmod
 
 ## Command Line Usage
 
-`npx vue-sfcmod <path> -t <transformation> --params [transformation params] [...additional options]`
+`npx vue-sfcmod <path> -t <transformation> --custom-opt [custom value, else customOpt will be true] [...add as many custom opts as wanted]`
 
 - `transformation` (required) - path to a module exporting a transformation function (JS/TS only) or an object with three transformation functions (`script` key for JS/TS, `template` for HTML and `style` for CSS)
 - `path` (required) - files or directory to transform.
-- `--params` (optional) - additional parameters passed to the transformation function
+
+Any CLI option you pass apart from `--version`, `--help` and `-t` will be passed to the script, style and template transformation functions in an object. For instance, if you pass `--classes-to-add="foo bar"`, you'll receive `{ classesToAdd: 'foo bar' }` as a third argument to your transformation functions.
 
 ## Programmatic API
 
-- `runTransformation(fileInfo, transformation, params)`
+- `runTransformation(fileInfo, transformation, options)`
 
 ## Known Limitations
 
@@ -60,12 +61,14 @@ When strings are passed to [`style` attributes](https://vuejs.org/guide/essentia
 ### Template
 
 - [x] Support `<template>` [#15](https://github.com/Sidnioulz/vue-sfcmod/issues/15)
+- [x] Support passing parameters to template transformations
 - [ ] _ongoing_ - Add an API to search for, edit, remove and inject nodes in template ASTs
 - [ ] Allow interpreting and modding JS expressions inside `<template>`
 
 ### Style
 
 - [ ] Support `<style>` [#16](https://github.com/Sidnioulz/vue-sfcmod/issues/16)
+- [ ] Support passing parameters to style transformations
 - [ ] Support :global, :slotted, etc
 - [ ] Support PostCSS and SCSS style tags
 

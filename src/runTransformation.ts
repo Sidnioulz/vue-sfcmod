@@ -10,13 +10,14 @@ import type { StyleTransformation } from '~/types/StyleTransformation'
 import type { TemplateTransformation } from '~/types/TemplateTransformation'
 import type { TransformationBlock } from '~/types/TransformationBlock'
 import type { TransformationModule } from '~/types/TransformationModule'
+import type { Options } from '~/types/TransformationOptions'
 import debug from '~/utils/debug'
 import { normaliseTransformationModule } from '~/utils/normaliseTransformationModule'
 
 export default function runTransformation(
   fileInfo: FileInfo,
   transformationModule: TransformationModule,
-  params: object = {},
+  params: Options = {},
 ) {
   const transformation = normaliseTransformationModule(transformationModule)
 

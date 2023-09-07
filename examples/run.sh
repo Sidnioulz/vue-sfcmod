@@ -8,7 +8,7 @@ printError() {
 }
 
 if [ "$#" -eq 0 ]; then
-  printError "Usage:\n\t${0} [Path to transformation] [Path to Vue files]\n\tor\n\t${0} [Example folder]"
+  printError "Usage:\n\n\tyarn example [example name] [options]\n"
 fi
 
 # Sanitise transform arg
@@ -17,34 +17,12 @@ if [ ! -f "$transformPath" ]; then
   if [ -f "examples/${transformPath}/transformation.cjs" ]; then
     transformPath="examples/${transformPath}/transformation.cjs"
   else
-    printError "Transform not found: $transformPath"
+    printError "Example not found: $transformPath"
   fi
 fi
 
-# Examples are used
-if [ "$#" -eq 1 ] && [ -d "examples/$1" ]; then
-  isExample=true
-  inputPaths="examples/$1/Input.*"
+inputPaths="examples/$1/Input.*"
 
-# Paths to source files are used
-else
-  isExample=false
-  # Compute all file paths. Vue-codemod doesn't honour --extensions
-  # so we do it manually by only keeping js/vue files.
-  allFiles=()
-  for path in "${@:2}"
-  do
-    # https://stackoverflow.com/a/63969005
-    IFS=$'\n'
-    allFiles+=($(find $path -name "*vue"))
-    unset IFS
-  done
-
-  inputPaths=$(printf '%q ' "${allFiles[@]}")
-fi
-
-yarn cli $inputPaths -t $transformPath
+yarn cli $inputPaths -t $transformPath ${@:2}
 yarn format:staged $inputPaths
-if [ isExample ]; then
-  git diff $inputPaths
-fi
+git diff $inputPaths

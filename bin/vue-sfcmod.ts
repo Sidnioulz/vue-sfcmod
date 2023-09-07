@@ -8,6 +8,7 @@ import { globbySync } from 'globby'
 import yargs from 'yargs'
 
 import runTransformation from '~/runTransformation'
+import type { Options } from '~/types/TransformationOptions'
 
 const debug = createDebug('vue-sfcmod')
 // eslint-disable-next-line no-console
@@ -16,17 +17,13 @@ const log = console.log.bind(console)
 const {
   _: files,
   transformation: transformationName,
-  params,
+  ...allOptions
 } = yargs()
-  .usage('Usage: $0 [file pattern]')
+  .usage('Usage: $0 [file pattern] -t [transformation]')
   .option('transformation', {
     alias: 't',
     type: 'string',
     describe: 'Name or path of the transformation module',
-  })
-  .option('params', {
-    alias: 'p',
-    describe: 'Custom params to the transformation',
   })
   .demandOption('transformation')
   .help()
@@ -45,6 +42,13 @@ async function main() {
   const resolvedPaths = globbySync(files as string[])
   const transformationModule = await loadTransformationModule(transformationName)
 
+  const params: Options = {}
+  for (const optKey of Object.keys(allOptions)) {
+    if (optKey !== 't' && optKey !== '$0' && !optKey.match(/-[a-z]/)) {
+      params[optKey] = allOptions[optKey]
+    }
+  }
+
   log(`Processing ${resolvedPaths.length} files…`)
 
   for (const p of resolvedPaths) {
@@ -54,7 +58,7 @@ async function main() {
       source: fs.readFileSync(p).toString(),
     }
     try {
-      const result = runTransformation(fileInfo, transformationModule, params as object)
+      const result = runTransformation(fileInfo, transformationModule, params)
       fs.writeFileSync(p, result)
     } catch (e) {
       // eslint-disable-next-line no-console

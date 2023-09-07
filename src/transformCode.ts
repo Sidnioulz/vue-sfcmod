@@ -5,13 +5,14 @@ import getParser from 'jscodeshift/src/getParser.js'
 import processTransformResult from '~/processTransformResult'
 import type { JSTransformation } from '~/types/JSTransformation'
 import type { TransformationBlock } from '~/types/TransformationBlock'
+import type { Options } from '~/types/TransformationOptions'
 import debug from '~/utils/debug'
 
 export default function transformCode(
   transformation: JSTransformation,
   descriptor: TransformationBlock,
   path: string,
-  params: object,
+  params: Options,
 ): boolean {
   debug('Running jscodeshift transform')
 
