@@ -4,8 +4,8 @@
 // template stringifier can handle.
 // ------------------------------------------------------------- //
 
-function transformer(file) {
-  return file.source
+function transformer(ast) {
+  return ast
 }
 
 module.exports = {

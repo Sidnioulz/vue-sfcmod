@@ -1,13 +1,15 @@
 <template>
   <div :class="containerClassNames">
-    <QuoteHeader>{{ slotProps.a }} {{ slotProps.b }}</QuoteHeader>
+    <QuoteHeader> {{ slotProps.a }} {{ slotProps.b }} </QuoteHeader>
     <blockquote :class="quoteClassNames">
-      <component :is="icon" size="medium" /><slot foo="bar"> Missing quote </slot>
+      <component :is="icon" size="medium" />
+      <slot foo="bar"> Missing quote </slot>
     </blockquote>
     <footer>
-      ― {{ author }}, ifif<slot name="extras" />
+      ― {{ author }}
+
+      <slot name="extras" />
       <hr />
-      if
     </footer>
   </div>
 </template>
