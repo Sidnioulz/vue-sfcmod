@@ -19,6 +19,7 @@ export default {
     '!**/node_modules/**',
     '!**/__fixtures__/**',
     '!**/__tests__/**',
+    '!**/src/types/*.ts',
   ],
   coverageDirectory: '<rootDir>/coverage/',
   coverageProvider: 'v8',
