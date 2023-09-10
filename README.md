@@ -21,16 +21,119 @@ yarn add -D vue-sfcmod
 
 ## Command Line Usage
 
-`npx vue-sfcmod <path> -t <transformation> --custom-opt [custom value, else customOpt will be true] [...add as many custom opts as wanted]`
+To transform files, type the following command:
 
-- `transformation` (required) - path to a module exporting a transformation function (JS/TS only) or an object with three transformation functions (`script` key for JS/TS, `template` for HTML and `style` for CSS)
-- `path` (required) - files or directory to transform.
+```sh
+yarn vue-sfcmod <path> -t <transformation>
+```
+
+- `path` (required) - files or directory to transform
+- `transformation` - path to a module exporting a transformation function (JS/TS only) or an object with transformation functions:
+  - `script` key for `<script>`, `<script setup>` and JS/TS files
+  - `template` for HTML `<template>`
+  - `style` for CSS and `<style>` (not yet implemented)
+
+### With preset transformation
+
+```sh
+yarn vue-sfcmod <path>
+```
+
+The `-t transformation` parameter is optional. If unset, `vue-sfcmod` will launch an interactive prompt to let users select a preset transformation to run. To configure presets, create a configuration file as explained in the next section.
+
+### With multiple files or paths
+
+```sh
+yarn vue-sfcmod <path 1> <path 2> <path 3> -t <transformation>
+```
+
+You may pass as many paths as you like. Each is resolved using [globby](https://github.com/sindresorhus/globby).
+
+### With transformation options
+
+```sh
+yarn vue-sfcmod <path> -t <transformation> --custom-flag --foo=value --bar value
+```
+
+You may pass custom CLI parameters that will be passed to transformation functions. Three syntaxes are supported:
+
+- `--custom-flag` without a value is mapped to `{ customFlag: true }`
+- `--foo=value` is mapped to `{ foo: value }`
+- `--bar value` is mapped to `{ bar: value }`
+
+Custom parameter names are converted to Pascal case in the object received by transformation functions. Check out [the `params` example](https://github.com/Sidnioulz/vue-sfcmod/blob/main/examples/params) for a fully working example.
+
+### Other flags
+
+- `vue-sfcmod --version` prints the current version
+- `vue-sfcmod --help` prints usage documentation
+
+--custom-opt [custom value, else customOpt will be true] [...add as many custom opts as wanted]`
 
 Any CLI option you pass apart from `--version`, `--help` and `-t` will be passed to the script, style and template transformation functions in an object. For instance, if you pass `--classes-to-add="foo bar"`, you'll receive `{ classesToAdd: 'foo bar' }` as a third argument to your transformation functions.
 
+## Config File
+
+To pass configuration options to `vue-sfcmod`, create a `sfcmod.config.ts` file at the root of your project. Below is a sample configuration file. You can also check out the [full sample file](https://github.com/Sidnioulz/vue-sfcmod/blob/main/sfcmod.config.example.ts).
+
+```ts
+import type { SfcmodConfig } from 'vue-sfcmod'
+
+const config: SfcmodConfig = {
+  // ...
+}
+
+export default config
+```
+
+This project uses [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig#cosmiconfig) to read configuration files. Check the documentation for a full list of supported syntaxes and file names. TypeScript usage is recommended to get IDE autocompletion and type checking.
+
+### `presets`
+
+Array of paths to preset transformation files, that are proposed to end users in an interactive prompt when they don't pass a `-t` flag to the CLI.
+
+```ts
+string | { glob: string, name: (string) => string }
+```
+
+Each item in the array can either be a glob (resolved with [globby](https://github.com/sindresorhus/globby)), or an object with a `glob` property and a `name` property. The `name` property is a function called for each file matched by the glob. It receives the path as an input, and outputs a name used in the interactive prompt.
+
+```ts
+  presets: [
+    {
+      // In this example, we use folder names as a name in the CLI.
+      glob: './examples/**/transformation.cjs',
+      name: (filePath: string) =>
+        filePath
+          .replace(/\/transformation.cjs$/, '')
+          .split('/')
+          .slice(-1)[0],
+    },
+  ],
+```
+
 ## Programmatic API
 
-- `runTransformation(fileInfo, transformation, options)`
+To use `vue-sfcmod` programmatically, you may import the `runTransformation` function. It runs a transformation on a single file.
+
+```ts
+function runTransformation(
+  fileInfo: {
+    path: string
+    source: string
+  },
+  transformationModule: TransformationModule,
+  options?: { [key: string]: unknown },
+): string
+```
+
+- `fileInfo` is the file to transform
+  - `fileInfo.path` is used to distinguish Vue files from JS/TS files
+  - `fileInfo.source` is the content of the file
+- `transformationModule` is the file containing the transformation to apply (matching the signature of the `-t` CLI option)
+- `options` is an arbitrary object of options passed to the transformation functions; it is optional
+
+The function returns a `string`, containing the transformed content.
 
 ## Known Limitations
 

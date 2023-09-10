@@ -16,7 +16,8 @@
   },
   "files": [
     "dist",
-    "!dist/**/__tests__/**"
+    "!dist/**/__tests__/**",
+    "sfcmod.config.example.ts"
   ],
   "scripts": {
     "build": "rm -rf dist && rollup -c",
@@ -47,20 +48,27 @@
   "license": "MIT",
   "dependencies": {
     "@babel/core": "^7.10.3",
-    "@types/debug": "^4.1.5",
     "@babel/preset-env": "^7.10.3",
     "@babel/types": "^7.12.12",
+    "@types/debug": "^4.1.5",
+    "@types/inquirer": "^9.0.3",
+    "@types/inquirer-autocomplete-prompt": "^3.0.0",
     "@types/jscodeshift": "^0.11.6",
     "@types/yargs": "^17.0.24",
+    "cosmiconfig": "^8.3.4",
     "debug": "^4.1.1",
+    "fuzzy": "^0.1.3",
     "globby": "^13.2.2",
+    "inquirer": "^9.2.10",
+    "inquirer-autocomplete-prompt": "^3.0.0",
     "jscodeshift": "^0.15.0",
     "lint-staged": "^14.0.0",
     "lru-cache": "^10.0.1",
     "rollup-plugin-vue": "^6.0.0",
     "source-map-js": "^1.0.2",
     "vue": "^3.3.4",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^17.7.0",
