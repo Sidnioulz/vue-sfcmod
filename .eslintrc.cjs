@@ -55,6 +55,7 @@ module.exports = {
       'error',
       {
         devDependencies: [
+          '__mocks__/*',
           '**/*.spec.ts',
           '.*.config.js',
           '.*.config.cjs',
@@ -98,6 +99,12 @@ module.exports = {
   overrides: [
     {
       files: ['**/*.cjs'],
+      rules: {
+        '@typescript-eslint/no-var-requires': 'off',
+      },
+    },
+    {
+      files: ['__mocks__/*'],
       rules: {
         '@typescript-eslint/no-var-requires': 'off',
       },
