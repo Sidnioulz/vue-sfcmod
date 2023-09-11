@@ -178,7 +178,9 @@ describe('vue-sfcmod binary', () => {
       }
     })
 
-    await expect(() => runBinary('/tmp/Input.vue', '-t', '/tmp/transformation.cjs')).not.toThrow()
+    await expect(() => runBinary('Input.vue', '-t', 'foo')).rejects.toThrow(
+      'Cannot find transformation module foo',
+    )
     expect(prompt).not.toHaveBeenCalled()
   })
 })
