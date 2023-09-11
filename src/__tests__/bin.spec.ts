@@ -182,4 +182,28 @@ describe('vue-sfcmod binary', () => {
       'Cannot find transformation module foo',
     )
   })
+
+  it('accepts objects in presets, with a glob property for the preset paths', async () => {
+    vol.fromJSON({
+      '/tmp/Input.vue': '<template>Hello world</template><script></script>',
+      '/tmp/transformation.cjs': 'module.exports = {}',
+    })
+    prompt.mockReturnValueOnce({ preset: '/tmp/transformation.cjs' })
+    const name = jest.fn().mockReturnValue('test')
+    search.mockImplementation(() => ({
+      config: { presets: [{ glob: '/tmp/transformation.cjs', name }] },
+      filepath: 'mock-sfcmod.config.ts',
+      isEmpty: false,
+    }))
+
+    await expect(() => runBinary('/tmp/Input.vue')).not.toThrow()
+    expect(prompt).toHaveBeenCalled()
+    expect(prompt).toHaveReturnedWith(
+      expect.objectContaining({
+        preset: '/tmp/transformation.cjs',
+      }),
+    )
+    expect(name).toHaveBeenCalledWith('/tmp/transformation.cjs')
+    expect(name).toHaveReturnedWith('test')
+  })
 })
