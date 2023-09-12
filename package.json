@@ -1,6 +1,6 @@
 {
   "name": "vue-sfcmod",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Vue 3 SFC codemod framework",
   "type": "module",
   "bin": "./dist/bin/vue-sfcmod.js",
