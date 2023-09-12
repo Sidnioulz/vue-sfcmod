@@ -14,7 +14,7 @@ import type { Options } from '~/types/TransformationOptions'
 import debug from '~/utils/debug'
 import { normaliseTransformationModule } from '~/utils/normaliseTransformationModule'
 
-export default function runTransformation(
+export function runTransformation(
   fileInfo: FileInfo,
   transformationModule: TransformationModule,
   params: Options = {},

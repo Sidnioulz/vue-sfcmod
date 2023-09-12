@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import type { Transform } from 'jscodeshift'
 
-import runTransformation from '../runTransformation'
+import { runTransformation } from '../runTransformation'
 import { TemplateTransformation } from '../types/TemplateTransformation'
 
 const unreachableTransform: Transform = () => {

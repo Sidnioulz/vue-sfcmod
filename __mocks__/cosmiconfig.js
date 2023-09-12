@@ -1,3 +1,3 @@
 module.exports = {
-  cosmiconfigSync: jest.fn(),
+  cosmiconfig: jest.fn(),
 }

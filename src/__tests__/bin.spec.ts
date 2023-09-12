@@ -1,14 +1,16 @@
 import fs from 'fs'
+import path from 'path'
 
-import { cosmiconfigSync } from 'cosmiconfig'
+import { cosmiconfig } from 'cosmiconfig'
 import { globbySync } from 'globby'
-import { prompt } from 'inquirer'
+import inquirer from 'inquirer'
 import { vol } from 'memfs'
 
 import { main } from '../bin'
+import { loadModuleFromPath } from '../utils/loadModuleFromPath'
 
 jest.mock('fs')
-jest.mock('fs/promises')
+jest.mock('../utils/loadModuleFromPath')
 
 /* TEST UTILS */
 async function runBinary(...args: string[]) {
@@ -32,12 +34,26 @@ describe('vue-sfcmod binary', () => {
   const search = jest.fn()
 
   beforeEach(() => {
+    loadModuleFromPath.mockImplementation((nameOrPath) => {
+      const customModulePath = path.resolve(process.cwd(), nameOrPath)
+      if (fs.existsSync(customModulePath)) {
+        const content = fs.readFileSync(customModulePath).toString('utf8')
+
+        // eslint-disable-next-line no-eval
+        return eval(content)
+      }
+
+      throw new Error(`Cannot find transformation module ${nameOrPath}`)
+    })
+
     globbySync.mockImplementation((p) => (Array.isArray(p) ? p : [p]))
-    cosmiconfigSync.mockImplementation(() => {
+
+    cosmiconfig.mockImplementation(() => {
       return {
         search,
       }
     })
+
     search.mockImplementation(() => {
       return {
         config: null,
@@ -47,6 +63,7 @@ describe('vue-sfcmod binary', () => {
 
     consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
     consoleErrSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+
     vol.reset()
   })
 
@@ -68,7 +85,11 @@ describe('vue-sfcmod binary', () => {
   })
 
   it('fails when the transformation module path is wrong', async () => {
-    await expect(() => runBinary('Input.vue', '-t', 'foo')).rejects.toThrow(
+    vol.fromJSON({
+      '/tmp/Input.vue': '<template>Hello world</template><script></script>',
+    })
+
+    await expect(() => runBinary('/tmp/Input.vue', '-t', 'foo')).rejects.toThrow(
       'Cannot find transformation module foo',
     )
   })
@@ -90,17 +111,16 @@ describe('vue-sfcmod binary', () => {
         'module.exports = function(file, api, options) { return JSON.stringify(options) }',
     })
 
-    await expect(() =>
-      runBinary(
-        '--foo',
-        'foo',
-        '-t',
-        '/tmp/transformation.cjs',
-        '--bar=bar',
-        '/tmp/Input.ts',
-        '--flag',
-      ),
-    ).not.toThrow()
+    await runBinary(
+      '--foo',
+      'foo',
+      '-t',
+      '/tmp/transformation.cjs',
+      '--bar=bar',
+      '/tmp/Input.ts',
+      '--flag',
+    )
+
     expect(fs.readFileSync('/tmp/Input.ts').toString('utf-8')).toBe(
       '{"foo":"foo","bar":"bar","flag":true}',
     )
@@ -149,7 +169,7 @@ describe('vue-sfcmod binary', () => {
       '/tmp/Input.vue': '<template>Hello world</template><script></script>',
       '/tmp/transformation.cjs': 'module.exports = {}',
     })
-    prompt.mockReturnValueOnce({ preset: '/tmp/transformation.cjs' })
+    inquirer.prompt.mockReturnValueOnce({ preset: '/tmp/transformation.cjs' })
     search.mockImplementation(() => ({
       config: { presets: ['/tmp/transformation.cjs'] },
       filepath: 'mock-sfcmod.config.ts',
@@ -157,8 +177,8 @@ describe('vue-sfcmod binary', () => {
     }))
 
     await expect(() => runBinary('/tmp/Input.vue')).not.toThrow()
-    expect(prompt).toHaveBeenCalled()
-    expect(prompt).toHaveReturnedWith(
+    expect(inquirer.prompt).toHaveBeenCalled()
+    expect(inquirer.prompt).toHaveReturnedWith(
       expect.objectContaining({
         preset: '/tmp/transformation.cjs',
       }),
@@ -178,7 +198,7 @@ describe('vue-sfcmod binary', () => {
       }
     })
 
-    await expect(() => runBinary('Input.vue', '-t', 'foo')).rejects.toThrow(
+    await expect(() => runBinary('/tmp/Input.vue', '-t', 'foo')).rejects.toThrow(
       'Cannot find transformation module foo',
     )
   })
@@ -188,7 +208,7 @@ describe('vue-sfcmod binary', () => {
       '/tmp/Input.vue': '<template>Hello world</template><script></script>',
       '/tmp/transformation.cjs': 'module.exports = {}',
     })
-    prompt.mockReturnValueOnce({ preset: '/tmp/transformation.cjs' })
+    inquirer.prompt.mockReturnValueOnce({ preset: '/tmp/transformation.cjs' })
     const name = jest.fn().mockReturnValue('test')
     search.mockImplementation(() => ({
       config: { presets: [{ glob: '/tmp/transformation.cjs', name }] },
@@ -197,8 +217,8 @@ describe('vue-sfcmod binary', () => {
     }))
 
     await expect(() => runBinary('/tmp/Input.vue')).not.toThrow()
-    expect(prompt).toHaveBeenCalled()
-    expect(prompt).toHaveReturnedWith(
+    expect(inquirer.prompt).toHaveBeenCalled()
+    expect(inquirer.prompt).toHaveReturnedWith(
       expect.objectContaining({
         preset: '/tmp/transformation.cjs',
       }),

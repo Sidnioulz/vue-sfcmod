@@ -1,7 +1,7 @@
-import * as fs from 'fs'
-import * as path from 'path'
+import fs from 'fs'
 
-import { cosmiconfigSync } from 'cosmiconfig'
+import { cosmiconfig } from 'cosmiconfig'
+import { TypeScriptLoader } from 'cosmiconfig-typescript-loader'
 import createDebug from 'debug'
 import fuzzy from 'fuzzy'
 import { globbySync } from 'globby'
@@ -10,8 +10,9 @@ import inquirerPrompt from 'inquirer-autocomplete-prompt'
 import yargs from 'yargs'
 
 import { isValidConfig } from '~/config.schema'
-import runTransformation from '~/runTransformation'
+import { runTransformation } from '~/runTransformation'
 import type { Options } from '~/types/TransformationOptions'
+import { loadModuleFromPath } from '~/utils/loadModuleFromPath'
 
 /* Find a transform to run and run it on input files. */
 export async function main() {
@@ -20,8 +21,12 @@ export async function main() {
   const debug = createDebug('vue-sfcmod')
 
   /* Load config file. */
-  const explorerSync = cosmiconfigSync('sfcmod')
-  const configResult = explorerSync.search()
+  const explorer = cosmiconfig('sfcmod', {
+    loaders: {
+      '.ts': TypeScriptLoader(),
+    },
+  })
+  const configResult = await explorer.search()
   let config
   if (configResult === null) {
     debug('No config file found.')
@@ -77,22 +82,10 @@ export async function main() {
     }
   }
 
-  /* Load arbitrary transformation module path. */
-  async function loadTransformationModule(nameOrPath: string) {
-    const customModulePath = path.resolve(process.cwd(), nameOrPath)
-    if (fs.existsSync(customModulePath)) {
-      const content = fs.readFileSync(customModulePath).toString('utf8')
-
-      // eslint-disable-next-line no-eval
-      return eval(content)
-    }
-
-    throw new Error(`Cannot find transformation module ${nameOrPath}`)
-  }
-
+  /* Load arbitrary transformation module path or ask the user if not found. */
   let transformationModule
   if (transformationName) {
-    transformationModule = await loadTransformationModule(transformationName)
+    transformationModule = await loadModuleFromPath(transformationName)
   } else {
     const answer = await inquirer.prompt({
       // @ts-expect-error TS does not recognise `type: 'autocomplete'` which would be cumbersome to shim.
@@ -115,7 +108,7 @@ export async function main() {
       },
     })
 
-    transformationModule = await loadTransformationModule(answer.preset)
+    transformationModule = await loadModuleFromPath(answer.preset)
   }
 
   /* Start running. */
