@@ -1,10 +1,10 @@
-import type { DirectiveNode } from '@vue/compiler-core'
+import type { AttributeNode, DirectiveNode } from '@vue/compiler-core'
 import { NodeTypes } from '@vue/compiler-core'
 import { compileTemplate } from '@vue/compiler-sfc'
 
 import SampleOne from '../../__fixtures__/One'
 import * as api from '../api'
-import { stringifyNode } from '../stringify'
+import { stringifyNode, type StringifiableNode } from '../stringify'
 import { genFakeLoc } from '../utils'
 
 function prepare(source: string) {
@@ -19,7 +19,13 @@ function expectStringifiedPrivate(stringifier, outcome: string): void {
   expect(stringifyNode(stringifier())).toEqual(outcome)
 }
 
-function expectStringifiedDirective(node: DirectiveNode, outcome: string): void {
+function expectStringifiedNode(node: StringifiableNode, outcome: string): void {
+  expectStringifiedPrivate(() => {
+    return node
+  }, outcome)
+}
+
+function expectStringifiedProp(node: AttributeNode | DirectiveNode, outcome: string): void {
   expectStringifiedPrivate(() => {
     return {
       type: NodeTypes.ELEMENT,
@@ -63,30 +69,33 @@ describe('template', () => {
         const newDirective = api.createDirective({ name })
         expect(newDirective).toHaveProperty('type', NodeTypes.DIRECTIVE)
         expect(newDirective).toHaveProperty('name', name)
-        expectStringifiedDirective(newDirective, 'v-pre')
+        expectStringifiedProp(newDirective, 'v-pre')
       })
 
       it('only accepts known names', () => {
         expect(() => api.createDirective({ name: 'nonExistantDirective' })).toThrow()
       })
+
       it('passes exp', () => {
         const exp = api.createSimpleExpression({ isStatic: true, content: 'foo' })
         const newDirective = api.createDirective({ name: 'bind', exp })
         expect(newDirective).toHaveProperty('exp', exp)
-        expectStringifiedDirective(newDirective, 'v-bind="foo"')
+        expectStringifiedProp(newDirective, 'v-bind="foo"')
       })
+
       it('passes arg', () => {
         const arg = api.createSimpleExpression({ isStatic: true, content: 'foo' })
         const newDirective = api.createDirective({ name: 'bind', arg })
         expect(newDirective).toHaveProperty('arg', arg)
-        expectStringifiedDirective(newDirective, 'v-bind:foo')
+        expectStringifiedProp(newDirective, 'v-bind:foo')
       })
+
       it('passes modifiers', () => {
         const arg = api.createSimpleExpression({ isStatic: true, content: 'click' })
         const modifiers = ['prevent', 'once']
         const newDirective = api.createDirective({ name: 'on', arg, modifiers })
         expect(newDirective).toHaveProperty('modifiers', modifiers)
-        expectStringifiedDirective(newDirective, '@click.prevent.once')
+        expectStringifiedProp(newDirective, '@click.prevent.once')
       })
 
       it('creates directive of type v-cloak', () => {
@@ -96,7 +105,7 @@ describe('template', () => {
         expect(newDirective).toHaveProperty('arg', undefined)
         expect(newDirective).toHaveProperty('exp', undefined)
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-cloak')
+        expectStringifiedProp(newDirective, 'v-cloak')
       })
 
       it('creates directive of type v-else', () => {
@@ -106,7 +115,7 @@ describe('template', () => {
         expect(newDirective).toHaveProperty('arg', undefined)
         expect(newDirective).toHaveProperty('exp', undefined)
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-else')
+        expectStringifiedProp(newDirective, 'v-else')
       })
 
       it('creates directive of type v-once', () => {
@@ -116,7 +125,7 @@ describe('template', () => {
         expect(newDirective).toHaveProperty('arg', undefined)
         expect(newDirective).toHaveProperty('exp', undefined)
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-once')
+        expectStringifiedProp(newDirective, 'v-once')
       })
 
       it('creates directive of type v-else-if', () => {
@@ -132,7 +141,7 @@ describe('template', () => {
         expect(newDirective).toHaveProperty('arg', undefined)
         expect(newDirective).toHaveProperty('exp', condition)
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-else-if="condition"')
+        expectStringifiedProp(newDirective, 'v-else-if="condition"')
       })
 
       it('creates directive of type v-if', () => {
@@ -148,7 +157,7 @@ describe('template', () => {
         expect(newDirective).toHaveProperty('arg', undefined)
         expect(newDirective).toHaveProperty('exp', condition)
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-if="condition"')
+        expectStringifiedProp(newDirective, 'v-if="condition"')
       })
 
       it('creates directive of type v-show', () => {
@@ -164,7 +173,7 @@ describe('template', () => {
         expect(newDirective).toHaveProperty('arg', undefined)
         expect(newDirective).toHaveProperty('exp', condition)
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-show="condition"')
+        expectStringifiedProp(newDirective, 'v-show="condition"')
       })
 
       it('creates directive of type v-html', () => {
@@ -180,7 +189,7 @@ describe('template', () => {
         expect(newDirective).toHaveProperty('arg', undefined)
         expect(newDirective).toHaveProperty('exp', exp)
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-html="variable"')
+        expectStringifiedProp(newDirective, 'v-html="variable"')
       })
 
       it('creates directive of type v-text', () => {
@@ -196,7 +205,7 @@ describe('template', () => {
         expect(newDirective).toHaveProperty('arg', undefined)
         expect(newDirective).toHaveProperty('exp', exp)
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-text="variable"')
+        expectStringifiedProp(newDirective, 'v-text="variable"')
       })
 
       it('creates directive of type v-memo with no dependency', () => {
@@ -208,7 +217,7 @@ describe('template', () => {
         expect(newDirective).toHaveProperty('arg', undefined)
         expect(newDirective).toHaveProperty('exp' /* TODO match a compound array */)
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-memo="[]"')
+        expectStringifiedProp(newDirective, 'v-memo="[]"')
       })
 
       it.skip('creates directive of type v-memo with one dependency', () => {
@@ -224,7 +233,7 @@ describe('template', () => {
         expect(newDirective).toHaveProperty('arg', undefined)
         expect(newDirective).toHaveProperty('exp' /* TODO match a compound array */)
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-memo="[variable]"')
+        expectStringifiedProp(newDirective, 'v-memo="[variable]"')
       })
 
       it.skip('creates directive of type v-memo with several dependencies', () => {
@@ -244,7 +253,7 @@ describe('template', () => {
         expect(newDirective).toHaveProperty('arg', undefined)
         expect(newDirective).toHaveProperty('exp' /* TODO match a compound array */)
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-memo="[variable, otherVariable]"')
+        expectStringifiedProp(newDirective, 'v-memo="[variable, otherVariable]"')
       })
 
       it('creates directive of type style', () => {
@@ -264,7 +273,7 @@ describe('template', () => {
           }),
         )
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(
+        expectStringifiedProp(
           newDirective,
           ':style="{"backgroundColor":"thistle","borderRadius":"4px"}"',
         )
@@ -298,7 +307,7 @@ describe('template', () => {
           }),
         )
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, ':class="getElementClassNames"')
+        expectStringifiedProp(newDirective, ':class="getElementClassNames"')
       })
 
       it('creates directive of type v-bind with v-bind', () => {
@@ -329,7 +338,7 @@ describe('template', () => {
           }),
         )
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-bind:class="getElementClassNames"')
+        expectStringifiedProp(newDirective, 'v-bind:class="getElementClassNames"')
       })
 
       it('creates directive of type v-bind without arg', () => {
@@ -353,7 +362,7 @@ describe('template', () => {
           }),
         )
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-bind="props"')
+        expectStringifiedProp(newDirective, 'v-bind="props"')
       })
 
       it('creates directive of type v-for on an array', () => {
@@ -367,7 +376,7 @@ describe('template', () => {
         expect(newDirective).toHaveProperty('arg', undefined)
         expect(newDirective).toHaveProperty('exp', undefined)
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-for="item in list"')
+        expectStringifiedProp(newDirective, 'v-for="item in list"')
       })
 
       it('creates directive of type v-for on an array with index', () => {
@@ -382,7 +391,7 @@ describe('template', () => {
         expect(newDirective).toHaveProperty('arg', undefined)
         expect(newDirective).toHaveProperty('exp', undefined)
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-for="(item, index) in list"')
+        expectStringifiedProp(newDirective, 'v-for="(item, index) in list"')
       })
 
       it('creates directive of type v-for on an object', () => {
@@ -397,7 +406,7 @@ describe('template', () => {
         expect(newDirective).toHaveProperty('arg', undefined)
         expect(newDirective).toHaveProperty('exp', undefined)
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-for="(value, key) in myObj"')
+        expectStringifiedProp(newDirective, 'v-for="(value, key) in myObj"')
       })
 
       it('creates directive of type v-for on an object with index', () => {
@@ -413,20 +422,75 @@ describe('template', () => {
         expect(newDirective).toHaveProperty('arg', undefined)
         expect(newDirective).toHaveProperty('exp', undefined)
         expect(newDirective).toHaveProperty('modifiers', [])
-        expectStringifiedDirective(newDirective, 'v-for="(value, key, index) in myObj"')
+        expectStringifiedProp(newDirective, 'v-for="(value, key, index) in myObj"')
+      })
+    })
+
+    describe('createAttribute', () => {
+      it('creates an attribute without value', () => {
+        const newAttribute = api.createAttribute({ name: 'checked' })
+
+        expect(newAttribute).toHaveProperty('type', NodeTypes.ATTRIBUTE)
+        expect(newAttribute).toHaveProperty('name', 'checked')
+        expectStringifiedProp(newAttribute, 'checked')
+      })
+
+      it('creates an attribute with value', () => {
+        const newAttribute = api.createAttribute({ name: 'foo', value: 'bar' })
+
+        expect(newAttribute).toHaveProperty('type', NodeTypes.ATTRIBUTE)
+        expect(newAttribute).toHaveProperty('name', 'foo')
+        expectStringifiedProp(newAttribute, 'foo="bar"')
+      })
+    })
+
+    describe('compareAttributeValues', () => {
+      it('correctly equates nullish values', () => {
+        expect(api.compareAttributeValues(null, null)).toBe(true)
+      })
+
+      it('correctly equates nullish to a TextNode with content "true"', () => {
+        expect(api.compareAttributeValues(null, api.createText({ content: 'true' }))).toBe(true)
+      })
+
+      it('correctly equates identical TextNodes', () => {
+        const a = api.createText({ content: 'identical' })
+        const b = api.createText({ content: 'identical' })
+        expect(api.compareAttributeValues(a, b)).toBe(true)
+      })
+
+      it('correctly discriminates a nullish value and an unrelated string', () => {
+        expect(api.compareAttributeValues(null, api.createText({ content: 'unrelated' }))).toBe(
+          false,
+        )
+        // TODO
+      })
+
+      it('correctly discriminates unrelated TextNodes', () => {
+        const a = api.createText({ content: 'identical' })
+        const b = api.createText({ content: 'unrelated' })
+        expect(api.compareAttributeValues(a, b)).toBe(false)
       })
     })
 
     describe('createText', () => {
-      // TODO
-    })
+      it('creates an empty TextNode', () => {
+        const content = null
+        const newNode = api.createText({ content })
 
-    describe('createAttribute', () => {
-      // TODO
-    })
+        expect(newNode).toHaveProperty('type', NodeTypes.TEXT)
+        expect(newNode).toHaveProperty('content', content)
+        expectStringifiedNode(newNode, '')
+      })
 
-    describe('compareAttributeValues', () => {
-      // TODO
+      it('creates a TextNode with content', () => {
+        const content = 'real'
+        const newNode = api.createText({ content })
+
+        expect(newNode).toHaveProperty('type', NodeTypes.TEXT)
+        expect(newNode).toHaveProperty('content', content)
+        expectStringifiedNode(newNode, 'real')
+      })
     })
 
     describe('exploreAst', () => {
@@ -460,5 +524,10 @@ describe('template', () => {
     describe('removeDirective', () => {
       // TODO
     })
+
+    // TODO createRootNode
+    // TODO add child to container-type node like RootNode
+    // TODO remove child from container-type node like RootNode
+    // TODO reorder children in container-type node like RootNode
   })
 })
