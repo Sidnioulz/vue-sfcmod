@@ -395,13 +395,7 @@ export function createTemplate(opts: CreateTemplateOptions): TemplateNode {
   }
 }
 
-export function createAttribute({
-  name,
-  value,
-}: {
-  name: string
-  value: string | undefined
-}): AttributeNode {
+export function createAttribute({ name, value }: { name: string; value?: string }): AttributeNode {
   debugTemplate('api: Creating Attribute', name)
 
   return {
@@ -418,12 +412,9 @@ export function compareAttributeValues(a: AttributeNode['value'], b: AttributeNo
   if (!a && !b) {
     return true
   }
-  if (!a || !b) {
-    return false
-  }
 
-  const aContent = isText(a) ? a.content : a
-  const bContent = isText(b) ? b.content : b
+  const aContent = a ? a.content : 'true'
+  const bContent = b ? b.content : 'true'
 
   return aContent === bContent
 }
