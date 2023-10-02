@@ -43,7 +43,7 @@ import {
 import { debugTemplate } from '~/utils/debug'
 import error from '~/utils/error'
 
-type StringifiableNode =
+export type StringifiableNode =
   | BaseElementNode
   | CommentNode
   | CompoundExpressionNode
