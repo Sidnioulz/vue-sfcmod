@@ -1,7 +1,6 @@
-import { compileTemplate } from '@vue/compiler-sfc'
-
 import processTransformResult from '~/processTransformResult'
 import * as TemplateAPI from '~/template/api'
+import { compileTemplate } from '~/template/compile'
 import { stringify } from '~/template/stringify'
 import type { TemplateTransformation } from '~/types/TemplateTransformation'
 import type { TransformationBlock } from '~/types/TransformationBlock'
@@ -20,8 +19,11 @@ export default function transformTemplate(
   const result = compileTemplate({
     source: descriptor.content,
     filename: path,
-    id: 'fake-id',
   })
+
+  if (result.errors.length) {
+    debug(result.errors)
+  }
 
   if (!result.ast) {
     throw error(
@@ -30,7 +32,11 @@ export default function transformTemplate(
     )
   }
 
-  const out = stringify(transformation(result.ast, TemplateAPI, params))
+  const filteredAPI = { ...TemplateAPI }
+  for (const key of Object.keys(filteredAPI).filter((k) => k.startsWith('_'))) {
+    delete filteredAPI[key as keyof typeof filteredAPI]
+  }
+  const out = stringify(transformation(result.ast, filteredAPI, params))
 
   return processTransformResult(descriptor, out)
 }
