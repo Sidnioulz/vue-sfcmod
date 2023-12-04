@@ -1555,10 +1555,12 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@ljharb/through@^2.3.9":
-  version "2.3.9"
-  resolved "https://registry.yarnpkg.com/@ljharb/through/-/through-2.3.9.tgz#85f221eb82f9d555e180e87d6e50fb154af85408"
-  integrity sha512-yN599ZBuMPPK4tdoToLlvgJB4CLK8fGl7ntfy0Wn7U6ttNvHYurd81bfUiK/6sMkiIwm65R6ck4L6+Y3DfVbNQ==
+"@ljharb/through@^2.3.11":
+  version "2.3.11"
+  resolved "https://registry.yarnpkg.com/@ljharb/through/-/through-2.3.11.tgz#783600ff12c06f21a76cc26e33abd0b1595092f9"
+  integrity sha512-ccfcIDlogiXNq5KcbAwbaO7lMh3Tm1i3khMPYpxlK8hH/W53zN81KM9coerRLOnTGu3nfXIniAmQbRI9OxbC0w==
+  dependencies:
+    call-bind "^1.0.2"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -1709,9 +1711,9 @@
     "@types/inquirer" "*"
 
 "@types/inquirer@*", "@types/inquirer@^9.0.3":
-  version "9.0.3"
-  resolved "https://registry.yarnpkg.com/@types/inquirer/-/inquirer-9.0.3.tgz#dc99da4f2f6de9d26c284b4f6aaab4d98c456db1"
-  integrity sha512-CzNkWqQftcmk2jaCWdBTf9Sm7xSw4rkI1zpU/Udw3HX5//adEZUIm9STtoRP1qgWj0CWQtJ9UTvqmO2NNjhMJw==
+  version "9.0.7"
+  resolved "https://registry.yarnpkg.com/@types/inquirer/-/inquirer-9.0.7.tgz#61bb8d0e42f038b9a1738b08fba7fa98ad9b4b24"
+  integrity sha512-Q0zyBupO6NxGRZut/JdmqYKOnN95Eg5V8Csg3PGKkP+FnvsUZx1jAyK7fztIszxxMuoBA6E3KXWvdZVXIpx60g==
   dependencies:
     "@types/through" "*"
     rxjs "^7.2.0"
@@ -3919,11 +3921,11 @@ inquirer@8.2.5:
     wrap-ansi "^7.0.0"
 
 inquirer@^9.2.10:
-  version "9.2.11"
-  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-9.2.11.tgz#e9003755c233a414fceda1891c23bd622cad4a95"
-  integrity sha512-B2LafrnnhbRzCWfAdOXisUzL89Kg8cVJlYmhqoi3flSiV/TveO+nsXwgKr9h9PIo+J1hz7nBSk6gegRIMBBf7g==
+  version "9.2.12"
+  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-9.2.12.tgz#0348e9311765b7c93fce143bb1c0ef1ae879b1d7"
+  integrity sha512-mg3Fh9g2zfuVWJn6lhST0O7x4n03k7G8Tx5nvikJkbq8/CK47WDVm+UznF0G6s5Zi0KcyUisr6DU8T67N5U+1Q==
   dependencies:
-    "@ljharb/through" "^2.3.9"
+    "@ljharb/through" "^2.3.11"
     ansi-escapes "^4.3.2"
     chalk "^5.3.0"
     cli-cursor "^3.1.0"
