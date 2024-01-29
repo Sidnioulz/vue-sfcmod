@@ -5,7 +5,7 @@ import { compileTemplate } from '@vue/compiler-sfc'
 import SampleOne from '../../__fixtures__/One'
 import * as api from '../api'
 import { stringifyNode, type StringifiableNode } from '../stringify'
-import { genFakeLoc } from '../utils'
+import { genFakeLoc, isAttribute } from '../utils'
 
 function prepare(source: string) {
   return compileTemplate({
@@ -485,7 +485,6 @@ describe('template', () => {
         expect(api.compareAttributeValues(null, api.createText({ content: 'unrelated' }))).toBe(
           false,
         )
-        // TODO
       })
 
       it('correctly discriminates unrelated TextNodes', () => {
@@ -516,10 +515,82 @@ describe('template', () => {
     })
 
     describe('exploreAst', () => {
-      // TODO
+      const ast = prepare(SampleOne)
+
+      it.each([
+        ['when matching nothing', () => false],
+        ['when matching some nodes', (node) => node.type % 2],
+        ['when matching everything', () => true],
+      ])('calls the matcher function for every node %s', (description, matcherImplem) => {
+        const matcher = jest.fn().mockImplementation(matcherImplem)
+
+        api.exploreAst(ast, matcher)
+
+        expect(matcher).toHaveBeenCalledTimes(181)
+      })
+
+      it('provides nodes to the matcher function', () => {
+        const matcher = jest.fn()
+
+        api.exploreAst(ast, matcher)
+
+        expect(matcher).toHaveBeenCalledWith(ast.children[0])
+      })
+
+      it('returns only the nodes for which the matcher returned true', () => {
+        const matcher = jest.fn().mockImplementation((node) => node === ast.children[0])
+
+        const outcome = api.exploreAst(ast, matcher)
+
+        expect(outcome).toHaveLength(1)
+        expect(outcome[0]).toBe(ast.children[0])
+      })
+
+      it('doesn\'t return the same node twice', () => {
+        const matcher = jest.fn().mockReturnValue(true)
+
+        const neverSameNodeCache = new Set()
+        const output = api.exploreAst(ast, matcher)
+
+        for (const found of output) {
+          expect(neverSameNodeCache.has(found)).toBe(false)
+          neverSameNodeCache.add(found)
+        }
+      })
     })
 
-    describe('findAstAttributes', () => {
+    describe.only('findAstAttributes', () => {
+      const ast = prepare(SampleOne)
+
+      it('calls exploreAst and findAttributes', () => {
+        const exploreSpy = jest.spyOn(api, 'exploreAst')
+
+        api.findAstAttributes(ast, () => false)
+
+        expect(exploreSpy).toHaveBeenCalled()
+      })
+
+      it('only calls the matcher on attributes', () => {
+        api.findAstAttributes(ast, (node) => {
+          expect(isAttribute(node)).toBeTruthy()
+
+          return true
+        })
+
+        expect.assertions(15)
+      })
+
+      it('calls the matcher on all attributes', () => {
+        api.findAstAttributes(ast, ((node) => {
+          expect(isAttribute(node)).toBeTruthy()
+
+          return true
+        }))
+
+
+
+        expect.assertions(15)
+      })
       // TODO
     })
 
