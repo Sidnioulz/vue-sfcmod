@@ -13,6 +13,8 @@ This project couldn't exist without the prior work done by [vue-codemod](https:/
 
 This project also takes inspiration from [vue-template-ast-to-template](https://github.com/CommanderXL/vue-template-ast-to-template), a Vue 2 template stringifier. `vue-sfcmod` was rewritten from scratch to target Vue 3 ASTs, however.
 
+**Call for maintainers 🛟📣:** I'm looking for co-maintainers with expertise on the Vue compiler. The lack of documentation on the compiler prevents me from fully implementing an API and stringifier for Vue codemodding. I have to reverse engineer the AST and figure out what's expected, and I run into occasional limitations that I believe are due to the compiler not being written with codemodding in mind. I need help from someone with expertise in Vue's internal behaviour and with the ability to push for change within the Vue compiler ecosystem if needed. I remain committed to improving the CLI for this project to ensure it can conveniently be used for codemodding and static analysis, but I'm unlikely to keep improving the Vue API on my own as I do not need Vue support any more in my day job.
+
 ## Install
 
 ```bash
