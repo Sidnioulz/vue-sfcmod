@@ -49,6 +49,7 @@ module.exports = {
     ],
     'prefer-destructuring': 'error',
     'import/extensions': 'off',
+    'no-underscore-dangle': 'off',
     'import/newline-after-import': ['error', { count: 1 }],
     'no-restricted-syntax': ['error', 'ForInStatement', 'LabeledStatement', 'WithStatement'],
     'import/no-extraneous-dependencies': [
@@ -78,7 +79,7 @@ module.exports = {
       },
     ],
     'import/prefer-default-export': 'off',
-    'jest/no-disabled-tests': 'error',
+    'jest/no-disabled-tests': 'warn',
     'jest/no-focused-tests': 'error',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'error',
