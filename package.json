@@ -55,7 +55,7 @@
     "@types/inquirer-autocomplete-prompt": "^3.0.0",
     "@types/jscodeshift": "^0.11.6",
     "@types/yargs": "^17.0.24",
-    "cosmiconfig": "^8.3.4",
+    "cosmiconfig": "^9.0.0",
     "cosmiconfig-typescript-loader": "^5.0.0",
     "debug": "^4.1.1",
     "fuzzy": "^0.1.3",
