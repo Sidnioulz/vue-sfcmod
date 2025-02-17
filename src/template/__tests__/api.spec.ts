@@ -117,7 +117,7 @@ describe('template', () => {
           content: 'once',
           isStatic: true,
         })
-        expectStringifiedDirective(newDirective, '@click.prevent.once')
+        expectStringifiedProp(newDirective, '@click.prevent.once')
       })
 
       it('creates directive of type v-cloak', () => {
@@ -468,11 +468,13 @@ describe('template', () => {
 
     describe('compareAttributeValues', () => {
       it('correctly equates nullish values', () => {
-        expect(api.compareAttributeValues(null, null)).toBe(true)
+        expect(api.compareAttributeValues(undefined, undefined)).toBe(true)
       })
 
       it('correctly equates nullish to a TextNode with content "true"', () => {
-        expect(api.compareAttributeValues(null, api.createText({ content: 'true' }))).toBe(true)
+        expect(api.compareAttributeValues(undefined, api.createText({ content: 'true' }))).toBe(
+          true,
+        )
       })
 
       it('correctly equates identical TextNodes', () => {
@@ -482,9 +484,9 @@ describe('template', () => {
       })
 
       it('correctly discriminates a nullish value and an unrelated string', () => {
-        expect(api.compareAttributeValues(null, api.createText({ content: 'unrelated' }))).toBe(
-          false,
-        )
+        expect(
+          api.compareAttributeValues(undefined, api.createText({ content: 'unrelated' })),
+        ).toBe(false)
       })
 
       it('correctly discriminates unrelated TextNodes', () => {
@@ -495,8 +497,17 @@ describe('template', () => {
     })
 
     describe('createText', () => {
-      it('creates an empty TextNode', () => {
+      it('creates an empty TextNode with null', () => {
         const content = null
+        // @ts-expect-error Testing the API.
+        const newNode = api.createText({ content })
+
+        expect(newNode).toHaveProperty('type', NodeTypes.TEXT)
+        expect(newNode).toHaveProperty('content', content)
+        expectStringifiedNode(newNode, '')
+      })
+      it('creates an empty TextNode with empty text', () => {
+        const content = ''
         const newNode = api.createText({ content })
 
         expect(newNode).toHaveProperty('type', NodeTypes.TEXT)
@@ -515,7 +526,7 @@ describe('template', () => {
     })
 
     describe('exploreAst', () => {
-      const ast = prepare(SampleOne)
+      const ast = prepare(SampleOne) as RootNode
 
       it.each([
         ['when matching nothing', () => false],
@@ -526,7 +537,7 @@ describe('template', () => {
 
         api.exploreAst(ast, matcher)
 
-        expect(matcher).toHaveBeenCalledTimes(181)
+        expect(matcher).toHaveBeenCalledTimes(182)
       })
 
       it('provides nodes to the matcher function', () => {
@@ -546,7 +557,7 @@ describe('template', () => {
         expect(outcome[0]).toBe(ast.children[0])
       })
 
-      it('doesn\'t return the same node twice', () => {
+      it("doesn't return the same node twice", () => {
         const matcher = jest.fn().mockReturnValue(true)
 
         const neverSameNodeCache = new Set()
@@ -559,16 +570,8 @@ describe('template', () => {
       })
     })
 
-    describe.only('findAstAttributes', () => {
-      const ast = prepare(SampleOne)
-
-      it('calls exploreAst and findAttributes', () => {
-        const exploreSpy = jest.spyOn(api, 'exploreAst')
-
-        api.findAstAttributes(ast, () => false)
-
-        expect(exploreSpy).toHaveBeenCalled()
-      })
+    describe('findAstAttributes', () => {
+      const ast = prepare(SampleOne) as RootNode
 
       it('only calls the matcher on attributes', () => {
         api.findAstAttributes(ast, (node) => {
@@ -581,13 +584,11 @@ describe('template', () => {
       })
 
       it('calls the matcher on all attributes', () => {
-        api.findAstAttributes(ast, ((node) => {
+        api.findAstAttributes(ast, (node) => {
           expect(isAttribute(node)).toBeTruthy()
 
           return true
-        }))
-
-
+        })
 
         expect.assertions(15)
       })
