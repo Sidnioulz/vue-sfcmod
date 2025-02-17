@@ -18,6 +18,7 @@
 
 <script lang="ts">
 import { CmpButton, IconQuote } from '@orgname/old-package'
+
 export default {
   components: {
     CmpButton,

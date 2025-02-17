@@ -39,7 +39,6 @@ describe('vue-sfcmod binary', () => {
       if (fs.existsSync(customModulePath)) {
         const content = fs.readFileSync(customModulePath).toString('utf8')
 
-        // eslint-disable-next-line no-eval
         return eval(content)
       }
 

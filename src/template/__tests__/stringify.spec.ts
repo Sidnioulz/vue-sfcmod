@@ -68,7 +68,7 @@ describe('template', () => {
       testEqual('static prop on HTMLElement', html`<img aria-label="hello" />`)
       testEqual('static class on HTMLElement', html`<img class="text-primary" />`)
       testEqual('respects attribute hyphenation', html`<img some-prop="text-primary" />`)
-      // eslint-disable-next-line no-useless-escape
+
       testUnequal(
         'static style',
         html`<img style="color: thistle; color: lavender;" />`,
@@ -185,12 +185,12 @@ describe('template', () => {
       )
       testEqual(
         'dynamic slot name with template literal',
-        // eslint-disable-next-line no-template-curly-in-string
+
         '<MyComponent><template #[`${step.key}-date`]></template></MyComponent>',
       )
       testEqual(
         'dynamic slot name with template literal and v-for',
-        // eslint-disable-next-line no-template-curly-in-string
+
         '<MyComponent v-bind="props"><template v-for="step in steps" :key="step.key" #[`${step.key}-date`]></template></MyComponent>',
       )
     })
