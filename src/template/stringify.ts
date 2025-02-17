@@ -574,7 +574,8 @@ function initNodeInstance() {
       directives: [],
       hoists: [],
       imports: [],
-      cached: 0,
+      cached: [],
+      source: '',
       temps: 0,
       loc: genFakeLoc(),
     })
