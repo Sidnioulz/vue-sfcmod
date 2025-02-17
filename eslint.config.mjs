@@ -124,6 +124,7 @@ export default [
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/no-explicit-any': 'error',
         '@typescript-eslint/no-non-null-assertion': 'error',
+        '@typescript-eslint/no-empty-object-type': 'off',
         'no-undef': 'off',
         'no-shadow': 'off',
         'no-use-before-define': 'off',
