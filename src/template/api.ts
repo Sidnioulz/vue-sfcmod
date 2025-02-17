@@ -86,6 +86,7 @@ export function createAttribute({
     type: NodeTypes.ATTRIBUTE,
     name,
     value: value ? createText({ content: value }) : undefined,
+    nameLoc: genFakeLoc(),
     loc: genFakeLoc(),
   }
 }
@@ -177,7 +178,7 @@ export function findDirectives(
 
     if (
       modifiers !== undefined &&
-      modifiers.every((mod: string) => !prop.modifiers.includes(mod))
+      modifiers.every((mod) => prop.modifiers.every((propMod) => mod.content !== propMod.content))
     ) {
       return true
     }

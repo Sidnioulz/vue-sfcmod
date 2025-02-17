@@ -394,7 +394,7 @@ class TemplateStringifier {
     if (argName.length && lhs.length > 1) {
       lhs = `${lhs}:`
     }
-    const modifiers = prop.modifiers.map((m) => `.${m}`).join('')
+    const modifiers = prop.modifiers.map((m) => `.${m.content}`).join('')
     const rhs = prop.exp ? `="${this.genExpression(prop.exp)}"` : ''
 
     return `${lhs}${argName}${modifiers}${rhs}`
