@@ -64,7 +64,7 @@
     "inquirer-autocomplete-prompt": "^3.0.0",
     "jscodeshift": "^0.15.0",
     "lint-staged": "^15.4.3",
-    "lru-cache": "^10.0.1",
+    "lru-cache": "^11.0.2",
     "rollup-plugin-vue": "^6.0.0",
     "source-map-js": "^1.0.2",
     "vue": "^3.3.4",
