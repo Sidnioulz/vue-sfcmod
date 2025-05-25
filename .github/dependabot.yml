@@ -1,8 +1,16 @@
-# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
-
 version: 2
 updates:
   - package-ecosystem: 'npm'
-    directory: '/'
+    directories:
+      - '/'
     schedule:
       interval: 'weekly'
+    versioning-strategy: increase
+    assignees:
+      - 'sidnioulz'
+    reviewers:
+      - 'sidnioulz'
+    groups:
+      all:
+        patterns:
+          - '*'
