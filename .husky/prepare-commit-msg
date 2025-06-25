@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
 
 if [ "${2}" != "commit" ] && [ "${2}" != "" ]; then
   exit 0
