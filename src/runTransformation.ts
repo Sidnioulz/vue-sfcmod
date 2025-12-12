@@ -14,7 +14,7 @@ import type { Options } from '~/types/TransformationOptions'
 import debug from '~/utils/debug'
 import { normaliseTransformationModule } from '~/utils/normaliseTransformationModule'
 
-export function runTransformation(
+export async function runTransformation(
   fileInfo: FileInfo,
   transformationModule: TransformationModule,
   params: Options = {},
@@ -30,7 +30,7 @@ export function runTransformation(
     debug('Source file is Vue SFC')
     const { descriptor } = parse(source, { filename: path })
     const transformsToRun: {
-      runner: (...args: unknown[]) => boolean
+      runner: (...args: unknown[]) => Promise<boolean> | boolean
       descriptor: TransformationBlock
       transform: JSTransformation | StyleTransformation | TemplateTransformation
     }[] = []
@@ -70,11 +70,17 @@ export function runTransformation(
       }
     }
 
-    const hasChanges = transformsToRun.reduce((previouslyHadChanges, current) => {
-      const currentHasChanges = current.runner(current.transform, current.descriptor, path, params)
+    let hasChanges = false
+    for (const current of transformsToRun) {
+      const currentHasChanges = await current.runner(
+        current.transform,
+        current.descriptor,
+        path,
+        params,
+      )
 
-      return previouslyHadChanges || currentHasChanges
-    }, false)
+      hasChanges ||= currentHasChanges
+    }
 
     return hasChanges ? stringifySFC(descriptor) : fileInfo.source
   }
@@ -84,7 +90,7 @@ export function runTransformation(
     )
   }
 
-  transformCode(
+  await transformCode(
     transformation.script,
     {
       type: 'script',

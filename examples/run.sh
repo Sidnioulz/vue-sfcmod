@@ -8,7 +8,7 @@ printError() {
 }
 
 if [ "$#" -eq 0 ]; then
-  printError "Usage:\n\n\tyarn example [example name] [options]\n"
+  printError "Usage:\n\n\tpnpm example [example name] [options]\n"
 fi
 
 # Sanitise transform arg
@@ -23,6 +23,6 @@ fi
 
 inputPaths="examples/$1/Input.*"
 
-yarn cli $inputPaths -t $transformPath ${@:2}
-yarn format:staged $inputPaths
+pnpm cli $inputPaths -t $transformPath ${@:2}
+pnpm format:staged $inputPaths
 git diff $inputPaths

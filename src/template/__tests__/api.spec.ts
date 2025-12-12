@@ -1,4 +1,4 @@
-import type { AttributeNode, DirectiveNode, RootNode } from '@vue/compiler-core'
+import type { AttributeNode, DirectiveNode, Node } from '@vue/compiler-core'
 import { NodeTypes } from '@vue/compiler-core'
 import { compileTemplate } from '@vue/compiler-sfc'
 
@@ -15,7 +15,7 @@ function prepare(source: string) {
   }).ast
 }
 
-function expectStringifiedPrivate(stringifier, outcome: string): void {
+function expectStringifiedPrivate(stringifier: () => StringifiableNode, outcome: string): void {
   expect(stringifyNode(stringifier())).toEqual(outcome)
 }
 
@@ -33,10 +33,10 @@ function expectStringifiedProp(node: AttributeNode | DirectiveNode, outcome: str
       tag: 'foo',
       tagType: 1,
       ns: 0,
-      children: 0,
+      children: [],
       props: [node],
       loc: genFakeLoc(),
-    }
+    } satisfies StringifiableNode
   }, `<foo ${outcome} />`)
 }
 
@@ -45,15 +45,16 @@ describe('template', () => {
     describe('isGenerated', () => {
       it('returns false for the AST root', () => {
         const ast = prepare(SampleOne)
+        assert(ast)
         expect(api.isGenerated(ast)).toBe(false)
         api.createText({ content: 'test' })
       })
 
       it('returns false for any element in a generated AST', () => {
         const ast = prepare(SampleOne)
-        expect(ast).toBeDefined()
+        assert(ast)
 
-        const allNodes = api.exploreAst(ast as RootNode, () => true)
+        const allNodes = api.exploreAst(ast, () => true)
         const generatedNodes = allNodes.filter(api.isGenerated)
 
         expect(generatedNodes).toHaveLength(0)
@@ -242,7 +243,7 @@ describe('template', () => {
         expectStringifiedProp(newDirective, 'v-memo="[]"')
       })
 
-      it.skip('creates directive of type v-memo with one dependency', () => {
+      it('creates directive of type v-memo with one dependency', () => {
         const exp = api.createSimpleExpression({
           content: 'variable',
           isStatic: false,
@@ -258,7 +259,7 @@ describe('template', () => {
         expectStringifiedProp(newDirective, 'v-memo="[variable]"')
       })
 
-      it.skip('creates directive of type v-memo with several dependencies', () => {
+      it('creates directive of type v-memo with several dependencies', () => {
         const exp1 = api.createSimpleExpression({
           content: 'variable',
           isStatic: false,
@@ -526,14 +527,15 @@ describe('template', () => {
     })
 
     describe('exploreAst', () => {
-      const ast = prepare(SampleOne) as RootNode
+      const ast = prepare(SampleOne)
+      assert(ast)
 
       it.each([
         ['when matching nothing', () => false],
-        ['when matching some nodes', (node) => node.type % 2],
+        ['when matching some nodes', (node: Node) => node.type % 2],
         ['when matching everything', () => true],
       ])('calls the matcher function for every node %s', (description, matcherImplem) => {
-        const matcher = jest.fn().mockImplementation(matcherImplem)
+        const matcher = vi.fn().mockImplementation(matcherImplem)
 
         api.exploreAst(ast, matcher)
 
@@ -541,7 +543,7 @@ describe('template', () => {
       })
 
       it('provides nodes to the matcher function', () => {
-        const matcher = jest.fn()
+        const matcher = vi.fn()
 
         api.exploreAst(ast, matcher)
 
@@ -549,7 +551,7 @@ describe('template', () => {
       })
 
       it('returns only the nodes for which the matcher returned true', () => {
-        const matcher = jest.fn().mockImplementation((node) => node === ast.children[0])
+        const matcher = vi.fn().mockImplementation((node) => node === ast.children[0])
 
         const outcome = api.exploreAst(ast, matcher)
 
@@ -558,7 +560,7 @@ describe('template', () => {
       })
 
       it("doesn't return the same node twice", () => {
-        const matcher = jest.fn().mockReturnValue(true)
+        const matcher = vi.fn().mockReturnValue(true)
 
         const neverSameNodeCache = new Set()
         const output = api.exploreAst(ast, matcher)
@@ -571,7 +573,8 @@ describe('template', () => {
     })
 
     describe('findAstAttributes', () => {
-      const ast = prepare(SampleOne) as RootNode
+      const ast = prepare(SampleOne)
+      assert(ast)
 
       it('only calls the matcher on attributes', () => {
         api.findAstAttributes(ast, (node) => {
@@ -595,27 +598,27 @@ describe('template', () => {
       // TODO
     })
 
-    describe('findAttributes', () => {
+    describe.todo('findAttributes', () => {
       // TODO
     })
 
-    describe('findDirectives', () => {
+    describe.todo('findDirectives', () => {
       // TODO
     })
 
-    describe('updateAttribute', () => {
+    describe.todo('updateAttribute', () => {
       // TODO
     })
 
-    describe('updateDirective', () => {
+    describe.todo('updateDirective', () => {
       // TODO
     })
 
-    describe('removeAttribute', () => {
+    describe.todo('removeAttribute', () => {
       // TODO
     })
 
-    describe('removeDirective', () => {
+    describe.todo('removeDirective', () => {
       // TODO
     })
 
