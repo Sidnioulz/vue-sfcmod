@@ -14,9 +14,9 @@ function prepare(source: string) {
 }
 
 function makeTestFunction(testFn: CallableFunction) {
-  const augmentedFn = (...args) => testFn(...args)
-  augmentedFn.only = (...args) => testFn(...args, test.only)
-  augmentedFn.skip = (...args) => testFn(...args, test.skip)
+  const augmentedFn = (...args: unknown[]) => testFn(...args)
+  augmentedFn.only = (...args: unknown[]) => testFn(...args, test.only)
+  augmentedFn.skip = (...args: unknown[]) => testFn(...args, test.skip)
   augmentedFn.todo = ((description: string) => test.todo(`${description}`)) as (
     description: string,
     source: string,
@@ -29,6 +29,7 @@ const testUnequal = makeTestFunction(
   (description: string, source: string, outcome: string, runner = test) => {
     runner(description, () => {
       const result = prepare(source)
+      assert(result.ast)
 
       const normalisedOutcome = outcome.replace(/\n */g, '')
       const normalisedResult = stringify(result.ast).replace(/\n */g, '')
@@ -43,10 +44,11 @@ const testEqual = makeTestFunction((description: string, source: string, runner 
 const testWholeSfc = makeTestFunction((description: string, source: string, runner = test) => {
   runner(description, () => {
     const result = prepare(source)
+    assert(result.ast)
 
     const templateOnlyRe = /<template>.*<\/template>/
 
-    const normalisedSource = source.replace(/\n */g, '').match(templateOnlyRe)[0]
+    const normalisedSource = source.replace(/\n */g, '').match(templateOnlyRe)?.[0]
     const normalisedResult = stringify(result.ast).replace(/\n */g, '')
 
     expect(normalisedResult).toEqual(normalisedSource)
@@ -465,6 +467,7 @@ describe('template', () => {
             type: NodeTypes.ATTRIBUTE,
             name: 'type',
             loc: genFakeLoc(),
+            nameLoc: genFakeLoc(),
             value: {
               type: NodeTypes.TEXT,
               content: 'number',

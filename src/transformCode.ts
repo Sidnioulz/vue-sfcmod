@@ -8,12 +8,12 @@ import type { TransformationBlock } from '~/types/TransformationBlock'
 import type { Options } from '~/types/TransformationOptions'
 import debug from '~/utils/debug'
 
-export default function transformCode(
+export default async function transformCode(
   transformation: JSTransformation,
   descriptor: TransformationBlock,
   path: string,
   params: Options,
-): boolean {
+): Promise<boolean> {
   debug('Running jscodeshift transform')
 
   let parser = getParser()
@@ -42,7 +42,7 @@ export default function transformCode(
     },
   }
 
-  const out = transformation({ path, source: descriptor.content }, api, params)
+  const out = await transformation({ path, source: descriptor.content }, api, params)
 
   return processTransformResult(descriptor, out)
 }

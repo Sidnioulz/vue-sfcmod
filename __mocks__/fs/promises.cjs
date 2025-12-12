@@ -1,3 +1,2 @@
 const { fs } = require('memfs')
-
-module.exports = fs
+module.exports = fs.promises

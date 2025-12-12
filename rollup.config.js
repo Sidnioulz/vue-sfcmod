@@ -1,6 +1,5 @@
 import resolve from '@rollup/plugin-node-resolve'
 import typescript from '@rollup/plugin-typescript'
-import commonjs from 'rollup-plugin-commonjs'
 import nodeExternals from 'rollup-plugin-node-externals'
 import vue from 'rollup-plugin-vue'
 
@@ -17,16 +16,16 @@ export default {
   output: {
     dir: 'dist',
     format: 'esm',
-    interop: 'auto',
     preserveModules: true,
     sourcemap: true,
   },
   plugins: [
+    typescript(),
     resolve({
       dedupe: vueCorePackage,
       mainFields: ['node', 'module', 'main'],
+      extensions: ['.ts', '.js', '.mjs', '.json'],
     }),
-    commonjs(),
     nodeExternals({
       deps: true,
       include: vueCorePackage,
@@ -34,6 +33,5 @@ export default {
     vue({
       target: 'node',
     }),
-    typescript(),
   ],
 }

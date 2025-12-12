@@ -1,5 +1,4 @@
-/* eslint-env jest */
-import type { Transform } from 'jscodeshift'
+import type { ASTNode, Expression, Identifier, Statement, Transform } from 'jscodeshift'
 
 import { runTransformation } from '../runTransformation'
 import { TemplateTransformation } from '../types/TemplateTransformation'
@@ -11,18 +10,22 @@ const unreachableTransform: Transform = () => {
 const addUseStrict: Transform = (file, api, options) => {
   const j = api.jscodeshift
 
-  const hasStrictMode = (body) =>
-    body.some((statement) =>
-      j.match(statement, {
-        type: 'ExpressionStatement',
-        expression: {
-          type: 'Literal',
-          value: 'use strict',
-        },
-      }),
-    )
+  const hasStrictMode = (body: ASTNode[]) =>
+    body.some((statement) => {
+      try {
+        return j.match(statement, {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'Literal',
+            value: 'use strict',
+          },
+        })
+      } catch {
+        return false
+      }
+    })
 
-  const withComments = (to, from) => {
+  const withComments = (to: Expression, from: Statement) => {
     // eslint-disable-next-line no-param-reassign
     to.comments = from.comments
 
@@ -51,14 +54,19 @@ const retypeParameter: Transform = (file, api, options) => {
 
   root
     .find(j.FunctionDeclaration)
-    .filter((node) => node.value.params)
+    .filter((node) => !!node.value.params)
     .forEach((node) => {
       node.value.params
-        .filter((param) => param.typeAnnotation)
+        .filter(
+          (param): param is Identifier =>
+            param.type === 'Identifier' && param.typeAnnotation !== undefined,
+        )
         .map((param) => param.typeAnnotation)
         .forEach((annotation) => {
-          // eslint-disable-next-line no-param-reassign
-          annotation.typeAnnotation = j.tsNumberKeyword()
+          if (annotation) {
+            // eslint-disable-next-line no-param-reassign
+            annotation.typeAnnotation = j.tsNumberKeyword()
+          }
         })
     })
 
@@ -238,60 +246,60 @@ defineOptions({
 </style>
 `
 
-describe('run-transformation', () => {
-  it('transforms .js files', () => {
+describe('run-transformation', async () => {
+  it('transforms .js files', async () => {
     const source = "function a() { console.log('hello') }"
     const file = { path: '/tmp/a.js', source }
-    const result = runTransformation(file, addUseStrict)
+    const result = await runTransformation(file, addUseStrict)
     expect(result).toBe("'use strict';\nfunction a() { console.log('hello') }")
   })
-  it('transforms .ts files', () => {
+  it('transforms .ts files', async () => {
     const source = "function a(name: string) { console.log('hello', name) }"
     const file = { path: '/tmp/a.ts', source }
-    const result = runTransformation(file, retypeParameter)
+    const result = await runTransformation(file, retypeParameter)
     expect(result).toBe("function a(name: number) { console.log('hello', name) }")
   })
 
-  it('transforms script blocks in .vue files with JS transform', () => {
+  it('transforms script blocks in .vue files with JS transform', async () => {
     const file = { path: '/tmp/scriptJSTransform.vue', source: vueSfcSource }
-    const result = runTransformation(file, addUseStrict)
+    const result = await runTransformation(file, addUseStrict)
     expect(result).toBe(addUseStrictResult)
   })
 
-  it('transforms script setup blocks in .vue files with JS transform', () => {
+  it('transforms script setup blocks in .vue files with JS transform', async () => {
     const file = {
       path: '/tmp/scriptSetupJSTransform.vue',
       source: vueSfcSetupSource,
     }
-    const result = runTransformation(file, addUseStrict)
+    const result = await runTransformation(file, addUseStrict)
     expect(result).toBe(addUseStrictResultWithSetup)
   })
 
-  it('transforms <script> in .vue files with Vue transform', () => {
+  it('transforms <script> in .vue files with Vue transform', async () => {
     const file = { path: '/tmp/script.vue', source: vueSfcSource }
-    const result = runTransformation(file, {
+    const result = await runTransformation(file, {
       script: addUseStrict,
     })
     expect(result).toBe(addUseStrictResult)
   })
 
-  it('transforms <script setup> in .vue files with Vue transform', () => {
+  it('transforms <script setup> in .vue files with Vue transform', async () => {
     const file = { path: '/tmp/scriptSetup.vue', source: vueSfcSetupSource }
-    const result = runTransformation(file, {
+    const result = await runTransformation(file, {
       script: addUseStrict,
     })
     expect(result).toBe(addUseStrictResultWithSetup)
   })
 
-  it('transforms <script setup lang="ts> in .vue files with Vue transform', () => {
+  it('transforms <script setup lang="ts> in .vue files with Vue transform', async () => {
     const file = { path: '/tmp/scriptLangTs.vue', source: vueSfcLangTsSource }
-    const result = runTransformation(file, {
+    const result = await runTransformation(file, {
       script: addUseStrict,
     })
     expect(result).toBe(addUseStrictResultWithLangTs)
   })
 
-  it('(jscodeshift transforms) skips .vue files without script blocks', () => {
+  it('(jscodeshift transforms) skips .vue files without script blocks', async () => {
     const source = `
       <template>
         <div id="app">
@@ -310,7 +318,7 @@ describe('run-transformation', () => {
         margin-top: 60px;
       }
       </style>`
-    const result = runTransformation(
+    const result = await runTransformation(
       {
         path: '/tmp/e.vue',
         source,
@@ -321,9 +329,9 @@ describe('run-transformation', () => {
     expect(result).toEqual(source)
   })
 
-  it('(VueTransformation) transforms template blocks in .vue files', () => {
+  it('(VueTransformation) transforms template blocks in .vue files', async () => {
     const file = { path: '/tmp/scriptLangTs.vue', source: vueSfcSource }
-    const result = runTransformation(file, {
+    const result = await runTransformation(file, {
       template: altToAriaLabel,
     })
 

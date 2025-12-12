@@ -14,14 +14,16 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "removeComments": false,
+    "skipLibCheck": true,
     "jsx": "preserve",
     "lib": ["ES2022", "DOM"],
-    "types": ["jest", "jscodeshift", "node"],
-    "typeRoots": ["node_modules/@types", "src/shims"],
+    "types": ["vitest/globals"],
+    "typeRoots": ["node_modules", "src/shims"],
     "rootDir": ".",
     "paths": {
       "~/*": ["./src/*.ts"]
     }
   },
-  "exclude": ["dist", "examples", "**/__tests__"]
+  "include": ["bin", "src", "index.ts"],
+  "exclude": ["dist", "examples"]
 }

@@ -2,7 +2,7 @@ import eslint from '@eslint/js'
 import tsEslint from 'typescript-eslint'
 import prettier from 'eslint-config-prettier'
 import eslintPluginImport from 'eslint-plugin-import'
-import eslintPluginJest from 'eslint-plugin-jest'
+import eslintPluginVitest from 'eslint-plugin-vitest'
 import eslintPluginVue from 'eslint-plugin-vue'
 import globals from 'globals'
 
@@ -53,7 +53,7 @@ export default [
     },
     plugins: {
       import: eslintPluginImport,
-      jest: eslintPluginJest,
+      vitest: eslintPluginVitest,
     },
   },
   ...tsEslint.config(
@@ -119,8 +119,8 @@ export default [
           },
         ],
         'import/prefer-default-export': 'off',
-        'jest/no-disabled-tests': 'warn',
-        'jest/no-focused-tests': 'error',
+        'vitest/no-disabled-tests': 'warn',
+        'vitest/no-focused-tests': 'error',
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/no-explicit-any': 'error',
         '@typescript-eslint/no-non-null-assertion': 'error',
@@ -145,9 +145,11 @@ export default [
     },
   },
   {
-    files: ['__mocks__/*'],
+    files: ['__mocks__/*', '**/__tests__/**/*.ts', '**/*.spec.ts'],
     languageOptions: {
-      globals: globals.jest,
+      globals: {
+        ...globals.node,
+      },
     },
     rules: {
       '@typescript-eslint/no-var-requires': 'off',
