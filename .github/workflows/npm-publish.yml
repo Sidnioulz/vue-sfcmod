@@ -4,8 +4,12 @@
 name: Publish NPM Package
 
 on:
-  release:
-    types: [created]
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   publish-npm:
@@ -25,6 +29,7 @@ jobs:
         with:
           node-version-file: package.json
           cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: pnpm install --ignore-scripts
@@ -32,14 +37,12 @@ jobs:
       - name: Audit dependencies
         run: pnpm audit
 
-      # TODO: Add semantic-release and change trigger conditions
-      # - name: Create Release
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      #   run: |
-      #     pnpm release
+      - name: Build package
+        run: pnpm build
 
-      - run: pnpm publish
+      - name: Create Release
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          pnpm release
