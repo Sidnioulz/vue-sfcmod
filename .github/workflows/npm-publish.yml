@@ -37,9 +37,6 @@ jobs:
       - name: Audit dependencies
         run: pnpm audit
 
-      - name: Build package
-        run: pnpm build
-
       - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

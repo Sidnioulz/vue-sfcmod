@@ -36,7 +36,7 @@
     "lint:eslint:fix": "pnpm lint:eslint --fix",
     "lint:types": "tsc --noEmit",
     "prepare": "husky",
-    "prepublishOnly": "pnpm build",
+    "release": "pnpm build && pnpm semantic-release",
     "playground": "npm -C ./playground run dev",
     "test": "vitest run",
     "test:watch": "vitest",
