@@ -3,7 +3,9 @@
   "version": "0.6.0",
   "description": "Vue 3 SFC codemod framework",
   "type": "module",
-  "bin": "./dist/bin/vue-sfcmod.js",
+  "bin": {
+    "vue-sfcmod": "dist/bin/vue-sfcmod.js"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -44,7 +46,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sidnioulz/vue-sfcmod.git"
+    "url": "https://github.com/Sidnioulz/vue-sfcmod"
   },
   "author": "Steve Dodier-Lazaro <sidnioulz@gmail.com>",
   "license": "MIT",
