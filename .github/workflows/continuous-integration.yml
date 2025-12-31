@@ -12,6 +12,9 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22, 24, 25]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -19,10 +22,10 @@ jobs:
           fetch-depth: 0
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-      - name: Use Node.js
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version-file: package.json
+          node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
@@ -33,6 +36,9 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22, 24, 25]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,10 +46,10 @@ jobs:
           fetch-depth: 0
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-      - name: Use Node.js
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version-file: package.json
+          node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
@@ -58,6 +64,9 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22, 24, 25]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -65,10 +74,10 @@ jobs:
           fetch-depth: 0
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-      - name: Use Node.js
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version-file: package.json
+          node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
