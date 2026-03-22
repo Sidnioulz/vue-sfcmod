@@ -6,7 +6,10 @@ export const ConfigSchema = z.object({
       z.string(),
       z.object({
         glob: z.string(),
-        name: z.function().args(z.string()).returns(z.string()),
+        name: z.function({
+          input: [z.string()],
+          output: z.string(),
+        }),
       }),
     ]),
   ),

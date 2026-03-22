@@ -24,7 +24,7 @@ I can't justify the time it takes me to reverse engineer the AST to improve cove
 ## Install
 
 ```bash
-yarn add -D vue-sfcmod
+pnpm i -D vue-sfcmod
 ```
 
 ## Command Line Usage
@@ -32,7 +32,7 @@ yarn add -D vue-sfcmod
 To transform files, type the following command:
 
 ```sh
-yarn vue-sfcmod <path> -t <transformation>
+pnpm vue-sfcmod <path> -t <transformation>
 ```
 
 - `path` (required) - files or directory to transform
@@ -44,7 +44,7 @@ yarn vue-sfcmod <path> -t <transformation>
 ### With preset transformation
 
 ```sh
-yarn vue-sfcmod <path>
+pnpm vue-sfcmod <path>
 ```
 
 The `-t transformation` parameter is optional. If unset, `vue-sfcmod` will launch an interactive prompt to let users select a preset transformation to run. To configure presets, create a configuration file as explained in the next section.
@@ -52,7 +52,7 @@ The `-t transformation` parameter is optional. If unset, `vue-sfcmod` will launc
 ### With multiple files or paths
 
 ```sh
-yarn vue-sfcmod <path 1> <path 2> <path 3> -t <transformation>
+pnpm vue-sfcmod <path 1> <path 2> <path 3> -t <transformation>
 ```
 
 You may pass as many paths as you like. Each is resolved using [globby](https://github.com/sindresorhus/globby).
@@ -60,7 +60,7 @@ You may pass as many paths as you like. Each is resolved using [globby](https://
 ### With transformation options
 
 ```sh
-yarn vue-sfcmod <path> -t <transformation> --custom-flag --foo=value --bar value
+pnpm vue-sfcmod <path> -t <transformation> --custom-flag --foo=value --bar value
 ```
 
 You may pass custom CLI parameters that will be passed to transformation functions. Three syntaxes are supported:

@@ -6,7 +6,8 @@
   </div>
 </template>
 
-<style scoped>:root {
+<style scoped>
+:root {
   --color-text-primary: #333333;
   --color-text-secondary: #666666;
   --color-primary: #007bff;

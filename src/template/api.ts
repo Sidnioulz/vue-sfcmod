@@ -52,8 +52,10 @@ export {
 // TODO getParentUpTo
 
 /* -- CREATE FUNCTIONS -- */
-interface CreateSimpleExpressionOptions
-  extends Omit<SimpleExpressionNode, 'loc' | 'type' | 'constType'> {}
+interface CreateSimpleExpressionOptions extends Omit<
+  SimpleExpressionNode,
+  'loc' | 'type' | 'constType'
+> {}
 export function createSimpleExpression({
   content,
   isStatic,
@@ -332,8 +334,10 @@ export function createText({ content }: Omit<TextNode, 'loc' | 'type'>): TextNod
   }
 }
 
-interface CreatePlainElementOptions
-  extends Omit<PlainElementNode, 'loc' | 'ns' | 'type' | 'children' | 'isSelfClosing' | 'props'> {
+interface CreatePlainElementOptions extends Omit<
+  PlainElementNode,
+  'loc' | 'ns' | 'type' | 'children' | 'isSelfClosing' | 'props'
+> {
   children?: PlainElementNode['children']
   isSelfClosing?: PlainElementNode['isSelfClosing']
   props?: PlainElementNode['props']
@@ -363,11 +367,10 @@ export function createPlainElement(opts: CreatePlainElementOptions): PlainElemen
   }
 }
 
-interface CreateTemplateOptions
-  extends Omit<
-    TemplateNode,
-    'loc' | 'ns' | 'type' | 'children' | 'isSelfClosing' | 'props' | 'tagType' | 'codegenNode'
-  > {
+interface CreateTemplateOptions extends Omit<
+  TemplateNode,
+  'loc' | 'ns' | 'type' | 'children' | 'isSelfClosing' | 'props' | 'tagType' | 'codegenNode'
+> {
   children?: TemplateNode['children']
   isSelfClosing?: TemplateNode['isSelfClosing']
   props?: TemplateNode['props']

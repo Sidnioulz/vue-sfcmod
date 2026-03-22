@@ -3,10 +3,8 @@ import fs from 'fs'
 import { cosmiconfig } from 'cosmiconfig'
 import { TypeScriptLoader } from 'cosmiconfig-typescript-loader'
 import createDebug from 'debug'
-import fuzzy from 'fuzzy'
 import { globbySync } from 'globby'
 import inquirer from 'inquirer'
-import inquirerPrompt from 'inquirer-autocomplete-prompt'
 import yargs from 'yargs'
 
 import { isValidConfig } from '~/config.schema'
@@ -16,8 +14,7 @@ import { loadModuleFromPath } from '~/utils/loadModuleFromPath'
 
 /* Find a transform to run and run it on input files. */
 export async function main() {
-  /* Init logger and inquirer. */
-  inquirer.registerPrompt('autocomplete', inquirerPrompt)
+  /* Init logger. */
   const debug = createDebug('vue-sfcmod')
 
   /* Load config file. */
@@ -88,24 +85,10 @@ export async function main() {
     transformationModule = await loadModuleFromPath(transformationName)
   } else {
     const answer = await inquirer.prompt({
-      // @ts-expect-error TS does not recognise `type: 'autocomplete'` which would be cumbersome to shim.
-      type: 'autocomplete',
+      type: 'list',
       name: 'preset',
       message: 'Preset transformation to run: ',
-      pageSize: 20,
-      source: async (_: unknown, input?: string) => {
-        if (input === undefined || input === '') {
-          return presets
-        }
-
-        const matches = fuzzy
-          .filter(input || '', presets, {
-            extract: (el: { name: string }) => el.name,
-          })
-          .map((el: { string: string }) => el.string)
-
-        return presets.filter(({ name }) => matches.includes(name))
-      },
+      choices: presets,
     })
 
     transformationModule = await loadModuleFromPath(answer.preset)
@@ -122,7 +105,7 @@ export async function main() {
       source: fs.readFileSync(p).toString(),
     }
     try {
-      const result = runTransformation(fileInfo, transformationModule, params)
+      const result = await runTransformation(fileInfo, transformationModule, params)
       fs.writeFileSync(p, result)
     } catch (e) {
       // eslint-disable-next-line no-console
