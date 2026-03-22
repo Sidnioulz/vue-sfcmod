@@ -5,18 +5,22 @@ import { cosmiconfig } from 'cosmiconfig'
 import { globbySync } from 'globby'
 import inquirer from 'inquirer'
 import { vol } from 'memfs'
+import type { MockInstance } from 'vitest'
 
 import { main } from '../bin'
 import { loadModuleFromPath } from '../utils/loadModuleFromPath'
 
-jest.mock('fs')
-jest.mock('../utils/loadModuleFromPath')
+vi.mock('cosmiconfig')
+vi.mock('fs')
+vi.mock('globby')
+vi.mock('inquirer')
+vi.mock('../utils/loadModuleFromPath')
 
 /* TEST UTILS */
 async function runBinary(...args: string[]) {
-  jest.replaceProperty(process, 'argv', ['yarn', 'vue-sfcmod', ...args])
+  vi.stubGlobal('process', { ...process, argv: ['pnpm', 'vue-sfcmod', ...args] })
 
-  jest.spyOn(process, 'exit').mockImplementation((code) => {
+  vi.spyOn(process, 'exit').mockImplementation((code) => {
     throw new Error(`process.exit(${code})`)
   })
 
@@ -29,12 +33,12 @@ async function runBinaryWithExit(exitCode: number, ...args: string[]) {
 
 /* TEST SUITE */
 describe('vue-sfcmod binary', () => {
-  let consoleLogSpy
-  let consoleErrSpy
-  const search = jest.fn()
+  let consoleLogSpy: MockInstance<typeof console.log>
+  let consoleErrSpy: MockInstance<typeof console.error>
+  const search = vi.fn()
 
   beforeEach(() => {
-    loadModuleFromPath.mockImplementation((nameOrPath) => {
+    vi.mocked(loadModuleFromPath).mockImplementation((nameOrPath: string) => {
       const customModulePath = path.resolve(process.cwd(), nameOrPath)
       if (fs.existsSync(customModulePath)) {
         const content = fs.readFileSync(customModulePath).toString('utf8')
@@ -45,13 +49,10 @@ describe('vue-sfcmod binary', () => {
       throw new Error(`Cannot find transformation module ${nameOrPath}`)
     })
 
-    globbySync.mockImplementation((p) => (Array.isArray(p) ? p : [p]))
+    vi.mocked(globbySync).mockImplementation((p: string | string[]) => (Array.isArray(p) ? p : [p]))
 
-    cosmiconfig.mockImplementation(() => {
-      return {
-        search,
-      }
-    })
+    // @ts-expect-error We don't mock the whole implementation.
+    vi.mocked(cosmiconfig).mockImplementation(() => ({ search }))
 
     search.mockImplementation(() => {
       return {
@@ -60,14 +61,14 @@ describe('vue-sfcmod binary', () => {
       }
     })
 
-    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
-    consoleErrSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+    consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+    consoleErrSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
     vol.reset()
   })
 
   afterEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
   /* CLI Parameters */
@@ -79,7 +80,7 @@ describe('vue-sfcmod binary', () => {
   it('prints help when --help is passed', async () => {
     await runBinaryWithExit(0, '--help')
     expect(consoleLogSpy).toHaveBeenCalledWith(
-      expect.stringMatching(/^Usage: yarn \[file pattern\] -t \[transformation\]/),
+      expect.stringMatching(/^Usage: pnpm \[file pattern\] -t \[transformation\]/),
     )
   })
 
@@ -168,7 +169,8 @@ describe('vue-sfcmod binary', () => {
       '/tmp/Input.vue': '<template>Hello world</template><script></script>',
       '/tmp/transformation.cjs': 'module.exports = {}',
     })
-    inquirer.prompt.mockReturnValueOnce({ preset: '/tmp/transformation.cjs' })
+    // @ts-expect-error We don't mock the whole implementation.
+    vi.mocked(inquirer.prompt).mockReturnValueOnce({ preset: '/tmp/transformation.cjs' })
     search.mockImplementation(() => ({
       config: { presets: ['/tmp/transformation.cjs'] },
       filepath: 'mock-sfcmod.config.ts',
@@ -207,8 +209,9 @@ describe('vue-sfcmod binary', () => {
       '/tmp/Input.vue': '<template>Hello world</template><script></script>',
       '/tmp/transformation.cjs': 'module.exports = {}',
     })
-    inquirer.prompt.mockReturnValueOnce({ preset: '/tmp/transformation.cjs' })
-    const name = jest.fn().mockReturnValue('test')
+    // @ts-expect-error We don't mock the whole implementation.
+    vi.mocked(inquirer.prompt).mockReturnValueOnce({ preset: '/tmp/transformation.cjs' })
+    const name = vi.fn().mockReturnValue('test')
     search.mockImplementation(() => ({
       config: { presets: [{ glob: '/tmp/transformation.cjs', name }] },
       filepath: 'mock-sfcmod.config.ts',
